@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LaggerOS</title>
+<style>
+:root{
+  --bg:#07080a; --panel:#0e1013; --line:#23272d; --ink:#d8d2c0; --dim:#6f6c62;
+  --amber:#ffb000; --red:#ff4d3d; --green:#7dff9b;
+  --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:13px/1.5 var(--mono)}
+::selection{background:var(--amber);color:#000}
+#boot{position:fixed;inset:0;background:#000;padding:32px;z-index:9999;overflow:hidden;color:var(--amber);white-space:pre-wrap;cursor:pointer}
+#boot .ok{color:var(--green)} #boot .bad{color:var(--red)} #boot .dim{color:var(--dim)}
+#desk{position:fixed;inset:0 0 34px 0;
+  background:
+    radial-gradient(ellipse at 50% 120%,#1a1408 0,transparent 60%),
+    repeating-linear-gradient(0deg,rgba(255,176,0,.025) 0 1px,transparent 1px 3px),
+    var(--bg);}
+#scan{position:fixed;inset:0;pointer-events:none;z-index:9000;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
+#mark{position:absolute;right:28px;bottom:22px;text-align:right;color:#2a2616;font-size:64px;font-weight:700;letter-spacing:-3px;user-select:none;line-height:1}
+#mark small{display:block;font-size:11px;letter-spacing:3px;color:#3a3420;font-weight:400;margin-top:6px}
+.icons{position:absolute;left:18px;top:18px;display:grid;gap:14px}
+.icon{width:84px;text-align:center;cursor:pointer;padding:8px 4px;border:1px solid transparent}
+.icon:hover{border-color:var(--line);background:rgba(255,176,0,.05)}
+.icon b{display:block;font-size:26px;color:var(--amber);font-weight:400}
+.icon span{font-size:11px;color:var(--dim)}
+.win{position:absolute;background:var(--panel);border:1px solid var(--line);box-shadow:8px 8px 0 rgba(0,0,0,.55);display:flex;flex-direction:column;min-width:260px;min-height:140px}
+.win.focus{border-color:var(--amber);box-shadow:8px 8px 0 rgba(255,176,0,.10)}
+.tb{display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:1px solid var(--line);cursor:grab;user-select:none;background:#0a0b0d}
+.win.focus .tb{background:#17120a}
+.tb .t{flex:1;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-size:11px}
+.win.focus .tb .t{color:var(--amber)}
+.tb button{background:none;border:1px solid var(--line);color:var(--dim);width:20px;height:20px;cursor:pointer;font:inherit;line-height:1}
+.tb button:hover{color:#000;background:var(--red);border-color:var(--red)}
+.body{flex:1;overflow:auto;min-height:0}
+.rz{position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 50%,var(--dim) 50%)}
+#bar{position:fixed;left:0;right:0;bottom:0;height:34px;background:#0a0b0d;border-top:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:0 8px;z-index:8000}
+#bar .task{border:1px solid var(--line);padding:2px 10px;cursor:pointer;color:var(--dim);background:none;font:inherit}
+#bar .task.on{color:var(--amber);border-color:var(--amber)}
+#bar .sp{flex:1}
+#net{color:var(--red);letter-spacing:1px;font-size:11px;cursor:pointer}
+#net:before{content:"";display:inline-block;width:7px;height:7px;background:var(--red);margin-right:6px;animation:bl 1.2s steps(2) infinite}
+@keyframes bl{50%{opacity:.2}}
+#clock{color:var(--dim);min-width:120px;text-align:right}
+/* terminal */
+.term{padding:10px;height:100%;overflow:auto;background:#050607;color:var(--green);cursor:text}
+.term .o{white-space:pre-wrap;word-break:break-word}
+.term .e{color:var(--red)} .term .d{color:var(--dim)} .term .a{color:var(--amber)}
+.term .pr{display:flex;gap:8px}
+.term .pr span{color:var(--amber);white-space:nowrap}
+.term input{flex:1;background:none;border:0;outline:0;color:var(--ink);font:inherit;caret-color:var(--amber)}
+/* files */
+.files{display:flex;flex-direction:column;height:100%}
+.fpath{padding:6px 10px;border-bottom:1px solid var(--line);color:var(--amber);display:flex;gap:8px;align-items:center}
+.fpath em{flex:1;font-style:normal}
+.btn{background:none;border:1px solid var(--line);color:var(--ink);padding:1px 8px;font:inherit;cursor:pointer}
+.btn:hover{border-color:var(--amber);color:var(--amber)}
+.flist{flex:1;overflow:auto}
+.row{display:flex;gap:10px;padding:4px 10px;cursor:pointer;border-bottom:1px solid #15181c}
+.row:hover{background:rgba(255,176,0,.07)}
+.row .n{flex:1}.row .s{color:var(--dim)}.row .x{color:var(--dim)}.row .x:hover{color:var(--red)}
+.dir{color:var(--amber)}
+/* notes */
+.notes{display:flex;flex-direction:column;height:100%}
+.notes .h{display:flex;gap:8px;padding:6px;border-bottom:1px solid var(--line)}
+.notes input{flex:1;background:#050607;border:1px solid var(--line);color:var(--ink);padding:2px 8px;font:inherit;outline:0}
+.notes textarea{flex:1;background:#050607;color:var(--ink);border:0;outline:0;padding:10px;font:inherit;resize:none;caret-color:var(--amber)}
+.notes .st{padding:3px 10px;color:var(--dim);border-top:1px solid var(--line);font-size:11px}
+/* monitor / net */
+.pad{padding:12px}
+.meter{margin:6px 0 12px}
+.meter div.l{display:flex;justify-content:space-between;color:var(--dim);font-size:11px}
+.meter div.b{height:8px;background:#15181c;margin-top:2px}
+.meter div.b i{display:block;height:100%;background:var(--amber);width:0;transition:width .6s steps(6)}
+.radar{display:block;margin:6px auto}
+.red{color:var(--red)} .am{color:var(--amber)} .dm{color:var(--dim)}
+.tb button:not(.cl):hover{background:var(--amber);border-color:var(--amber)}
+#chip{position:relative;cursor:pointer;border:1px solid var(--line);padding:2px 10px;color:var(--amber);overflow:hidden;user-select:none}
+#chip:hover{border-color:var(--amber)}
+#chip i{position:absolute;left:0;bottom:0;height:2px;background:var(--amber);width:0;transition:width .5s}
+#pwr{margin-left:4px}
+.toast{position:fixed;right:16px;bottom:48px;z-index:9500;background:#17120a;border:1px solid var(--amber);color:var(--amber);padding:8px 14px;box-shadow:6px 6px 0 rgba(0,0,0,.6);animation:tin .25s steps(5)}
+@keyframes tin{from{transform:translateX(30px);opacity:0}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9800;display:flex;align-items:center;justify-content:center}
+.modal .box{background:var(--panel);border:1px solid var(--amber);padding:16px;min-width:300px;max-width:90vw;box-shadow:8px 8px 0 rgba(0,0,0,.6)}
+.modal .mt{margin-bottom:10px;color:var(--ink)}
+.modal input{width:100%;background:#050607;border:1px solid var(--line);color:var(--ink);padding:4px 8px;font:inherit;outline:0;margin-bottom:10px}
+.modal .mr{display:flex;gap:8px;flex-wrap:wrap}
+.modal .mr .btn{padding:3px 12px}
+.prof h4{margin:14px 0 6px;color:var(--dim);font-size:11px;letter-spacing:2px;font-weight:400}
+.ph{display:flex;gap:14px;align-items:center}
+.av{width:64px;height:64px;border:1px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--amber);background:#17120a}
+.pn{font-size:18px;color:var(--amber)} .pt{color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.grid div{border:1px solid var(--line);padding:6px 8px}
+.grid b{display:block;color:var(--amber);font-size:16px;font-weight:400}
+.grid span{color:var(--dim);font-size:11px}
+.avs,.nm{display:flex;gap:6px;align-items:center}
+.avs .btn{font-size:18px;width:36px;height:36px;padding:0;color:var(--amber)}
+.avs .btn.sel{border-color:var(--amber);background:#17120a}
+.nm input{flex:1;margin:0}
+.nm input,.prof textarea{background:#050607;border:1px solid var(--line);color:var(--ink);padding:4px 8px;font:inherit;outline:0}
+.prof textarea{width:100%;height:80px;margin-top:8px;resize:vertical}
+.ach div{padding:4px 8px;border:1px solid var(--line);margin-bottom:4px;display:flex;justify-content:space-between;gap:10px}
+.ach div.on{border-color:var(--amber);color:var(--amber)}
+.ach div.off{color:#4a473f}
+</style>
+</head>
+<body>
+<div id="boot"></div>
+<div id="desk">
+  <div class="icons" id="icons"></div>
+  <div id="mark">LAGGER<small>AIR-GAPPED / NO UPLINK / NO WORLD</small></div>
+</div>
+<div id="bar"><span id="tasks" style="display:flex;gap:6px"></span><span class="sp"></span><span id="chip" title="Open profile"></span><span id="net" title="Click to scan">UPLINK: SEVERED</span><span id="clock"></span><button class="task" id="pwr" title="Power">⏻</button></div>
+<div id="scan"></div>
+
+<script>
+/* ============ LaggerOS ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const KEY='laggeros.fs.v1';
+const bootTime=Date.now();
+
+/* ---------- virtual filesystem (persisted, local only) ---------- */
+const defaultFS=()=>({t:'d',c:{
+  home:{t:'d',c:{
+    lagger:{t:'d',c:{
+      'readme.txt':{t:'f',d:'Welcome to LaggerOS.\n\nThis machine has no network stack. There is no sync, no cloud,\nno telemetry, no updates. Whatever you write here stays here.\n\nTry the terminal: type "help".'},
+      docs:{t:'d',c:{}},
+      'journal.txt':{t:'f',d:'Day 1. The silence is loud. Nothing is watching.'}
+    }}
+  }},
+  etc:{t:'d',c:{
+    'hostname':{t:'f',d:'lagger'},
+    'network.conf':{t:'f',d:'# interfaces: none\n# routes: none\n# dns: none\nuplink=severed\n'},
+    'motd':{t:'f',d:'You are offline. That is the feature.'}
+  }},
+  sys:{t:'d',c:{'kernel.log':{t:'f',d:'[0.000] lagger-kernel 0.1 booting\n[0.004] net: stack disabled at compile time\n[0.011] radios: removed\n'}}}
+}});
+/* storage on this laptop (browser local storage); falls back to memory if the browser blocks it */
+const mem={};
+const store={ok:true,
+  get(k){try{return localStorage.getItem(k)}catch(e){this.ok=false;return mem[k]??null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){this.ok=false;mem[k]=v}},
+  del(k){try{localStorage.removeItem(k)}catch(e){this.ok=false;delete mem[k]}}};
+try{localStorage.setItem('__t','1');localStorage.removeItem('__t')}catch(e){store.ok=false}
+let FS; try{FS=JSON.parse(store.get(KEY))||defaultFS()}catch(e){FS=defaultFS()}
+const save=()=>store.set(KEY,JSON.stringify(FS));
+const countNodes=(n=FS)=>n.t==='f'?1:1+Object.values(n.c).reduce((a,x)=>a+countNodes(x),0);
+const parts=p=>p.split('/').filter(Boolean);
+function norm(cwd,p){
+  const base=p.startsWith('/')?[]:parts(cwd);
+  for(const x of parts(p)){ if(x==='.')continue; if(x==='..')base.pop(); else base.push(x); }
+  return '/'+base.join('/');
+}
+function node(path){
+  let n=FS; for(const x of parts(path)){ if(!n||n.t!=='d'||!(x in n.c))return null; n=n.c[x]; } return n;
+}
+function parentOf(path){const ps=parts(path);const name=ps.pop();return {dir:node('/'+ps.join('/')),name}}
+const size=n=>n.t==='f'?n.d.length:Object.values(n.c).reduce((a,x)=>a+size(x),0);
+
+/* ---------- window manager ---------- */
+let z=10,wins=[],focused=null;
+function openWin(title,content,{w=520,h=340,x,y}={}){
+  const win=el('div','win');
+  const tb=el('div','tb',`<span class="t">${esc(title)}</span>`);
+  const mn=el('button','','–'),mx=el('button','','□'),close=el('button','cl','×');
+  mn.title='minimize';mx.title='maximize';close.title='close';
+  tb.append(mn,mx,close);
+  const body=el('div','body'); body.append(content);
+  const rz=el('div','rz');
+  win.append(tb,body,rz);
+  win.style.width=w+'px';win.style.height=h+'px';
+  const n=wins.length;
+  win.style.left=(x??(150+n*28)%Math.max(200,innerWidth-w-40))+'px';
+  win.style.top=(y??(40+n*26)%Math.max(100,innerHeight-h-80))+'px';
+  $('#desk').append(win);
+  const task=el('button','task',esc(title));
+  $('#tasks').append(task);
+  const o={win,task,title};
+  wins.push(o);
+  const focus=()=>{wins.forEach(k=>{k.win.classList.remove('focus');k.task.classList.remove('on')});win.classList.add('focus');task.classList.add('on');win.style.zIndex=++z;focused=o};
+  win.addEventListener('mousedown',focus);
+  o.focus=focus;
+  task.onclick=()=>{
+    if(win.style.display==='none'){win.style.display='';focus()}
+    else if(focused===o){win.style.display='none';task.classList.remove('on')}
+    else focus();
+  };
+  mn.onclick=e=>{e.stopPropagation();win.style.display='none';task.classList.remove('on')};
+  mx.onclick=e=>{
+    e&&e.stopPropagation();
+    if(win.dataset.max){const g=JSON.parse(win.dataset.max);Object.assign(win.style,g);delete win.dataset.max}
+    else{
+      win.dataset.max=JSON.stringify({left:win.style.left,top:win.style.top,width:win.style.width,height:win.style.height});
+      const d=$('#desk');Object.assign(win.style,{left:'0px',top:'0px',width:d.clientWidth+'px',height:d.clientHeight+'px'});
+    }
+    focus();
+  };
+  tb.addEventListener('dblclick',e=>{if(e.target.tagName!=='BUTTON')mx()});
+  close.onclick=e=>{e.stopPropagation();win.remove();task.remove();wins=wins.filter(k=>k!==o);if(focused===o)focused=null;o.onclose&&o.onclose()};
+  tb.addEventListener('mousedown',e=>{
+    if(e.target.tagName==='BUTTON')return;
+    if(win.dataset.max)return;
+    const sx=e.clientX-win.offsetLeft,sy=e.clientY-win.offsetTop;
+    const mv=ev=>{win.style.left=Math.max(0,ev.clientX-sx)+'px';win.style.top=Math.max(0,Math.min(innerHeight-70,ev.clientY-sy))+'px'};
+    const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up)};
+    addEventListener('mousemove',mv);addEventListener('mouseup',up);e.preventDefault();
+  });
+  rz.addEventListener('mousedown',e=>{
+    const sw=win.offsetWidth,sh=win.offsetHeight,sx=e.clientX,sy=e.clientY;
+    const mv=ev=>{win.style.width=Math.max(260,sw+ev.clientX-sx)+'px';win.style.height=Math.max(140,sh+ev.clientY-sy)+'px'};
+    const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up)};
+    addEventListener('mousemove',mv);addEventListener('mouseup',up);e.preventDefault();e.stopPropagation();
+  });
+  focus();
+  return o;
+}
+
+/* ---------- dialogs ---------- */
+function modal(text,{input=false,def='',ok='OK',cancel=true,buttons=null}={},cb){
+  const ov=el('div','modal'),bx=el('div','box'),mt=el('div','mt');mt.textContent=text;bx.append(mt);
+  let inp;if(input){inp=el('input');inp.value=def;inp.spellcheck=false;bx.append(inp)}
+  const row=el('div','mr');bx.append(row);ov.append(bx);document.body.append(ov);
+  const close=()=>ov.remove();
+  if(buttons){buttons.forEach(([l,f])=>{const b=el('button','btn',l);b.onclick=()=>{close();f&&f()};row.append(b)})}
+  else{const b=el('button','btn',ok);b.onclick=()=>{close();cb&&cb(inp?inp.value:true)};row.append(b)}
+  if(cancel){const c=el('button','btn','cancel');c.onclick=close;row.append(c)}
+  ov.addEventListener('mousedown',e=>{if(e.target===ov)close()});
+  ov.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Enter'&&inp){close();cb&&cb(inp.value)}});
+  setTimeout(()=>(inp||row.firstChild).focus(),20);
+}
+const ask=(text,def,cb)=>modal(text,{input:true,def},cb);
+const toast=m=>{const t=el('div','toast');t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
+
+/* ---------- profile / levels (saved on this laptop) ---------- */
+const PKEY='laggeros.profile.v1';
+const defP=()=>({name:'lagger',avatar:'◉',xp:0,cmds:0,files:0,saves:0,sweeps:0,netfails:0,boots:0,minutes:0,created:Date.now(),ach:{}});
+let P;try{P=Object.assign(defP(),JSON.parse(store.get(PKEY)||'{}'))}catch(e){P=defP()}
+if(!P.ach||typeof P.ach!=='object')P.ach={};
+const saveP=()=>store.set(PKEY,JSON.stringify(P));
+const levelOf=xp=>{let L=1;while(xp>=25*(L+1)*L)L++;return L};
+const lvBase=L=>25*L*(L-1), lvNext=L=>25*L*(L+1);
+const TITLES=['Drifter','Lurker','Static','Operator','Hermit','Archivist','Cipher','Warden','Sovereign','Void Walker'];
+const titleOf=L=>TITLES[Math.min(L,TITLES.length)-1];
+const AVS=['◉','▲','◆','✦','☠','⌬','☯','⚑'];
+const ACH=[
+ {id:'boot',n:'First Silence',d:'Boot LaggerOS',f:p=>p.boots>=1},
+ {id:'c10',n:'Shell Dweller',d:'Run 10 commands',f:p=>p.cmds>=10},
+ {id:'c100',n:'Daemon',d:'Run 100 commands',f:p=>p.cmds>=100},
+ {id:'f5',n:'Hoarder',d:'Create 5 files or folders',f:p=>p.files>=5},
+ {id:'nf',n:'Knocking on Nothing',d:'Try to reach the network',f:p=>p.netfails>=1},
+ {id:'sv',n:'Diarist',d:'Save 3 notes',f:p=>p.saves>=3},
+ {id:'sw',n:'Radar Watcher',d:'Watch 3 radar sweeps',f:p=>p.sweeps>=3},
+ {id:'m30',n:'Long Offline',d:'Spend 30 minutes offline',f:p=>p.minutes>=30},
+ {id:'l5',n:'Hermit',d:'Reach level 5',f:p=>levelOf(p.xp)>=5}
+];
+const profSubs=new Set();
+function refreshProfile(){
+  const L=levelOf(P.xp),pct=Math.min(100,(P.xp-lvBase(L))/(lvNext(L)-lvBase(L))*100);
+  const c=$('#chip');if(c)c.innerHTML=`${esc(P.avatar)} ${esc(P.name)} · Lv ${L}<i style="width:${pct}%"></i>`;
+  profSubs.forEach(f=>f());
+}
+function addXP(n){
+  const before=levelOf(P.xp);P.xp+=n;const after=levelOf(P.xp);
+  if(after>before)toast(`LEVEL UP → ${after} · ${titleOf(after)}`);
+  ACH.forEach(a=>{if(!P.ach[a.id]&&a.f(P)){P.ach[a.id]=Date.now();toast('Badge unlocked: '+a.n)}});
+  saveP();refreshProfile();
+}
+function creditFiles(before){const d=countNodes()-before;if(d>0){P.files+=d;addXP(5*d)}}
+function onBoot(){P.boots++;addXP(10);if(P.boots>1)toast(`welcome back, ${P.name}. still offline.`)}
+function onSweep(){P.sweeps++;addXP(1)}
+setInterval(()=>{P.minutes++;addXP(1)},60000);
+
+function appProfile(){
+  const w=el('div','pad prof');
+  w.innerHTML=`<div class="ph"><div class="av"></div><div style="flex:1"><div class="pn"></div><div class="pt"></div>
+    <div class="meter" style="margin:8px 0 0"><div class="l"><span class="lv"></span><span class="xpt"></span></div><div class="b"><i class="xb"></i></div></div></div></div>
+    <div class="grid"></div>
+    <h4>AVATAR</h4><div class="avs"></div>
+    <h4>CALLSIGN</h4><div class="nm"><input maxlength="16" spellcheck="false"><button class="btn rn">rename</button></div>
+    <h4>BADGES</h4><div class="ach"></div>
+    <h4>DATA</h4><div class="dm sto"></div>
+    <div class="nm" style="margin-top:8px;flex-wrap:wrap"><button class="btn ex">export backup</button><button class="btn im">import backup</button><button class="btn rp">reset profile</button></div>
+    <textarea class="bk" placeholder="export shows your backup JSON here. paste a backup here, then press import." spellcheck="false"></textarea>`;
+  const q=s=>$(s,w);
+  const avs=q('.avs');
+  AVS.forEach(a=>{const b=el('button','btn',a);b.onclick=()=>{P.avatar=a;saveP();refreshProfile()};avs.append(b)});
+  const ni=q('.nm input');
+  const rename=()=>{const v=ni.value.trim().replace(/[^\w .\-]/g,'').slice(0,16);if(!v){toast('name cannot be empty');return}P.name=v;saveP();refreshProfile();toast('callsign set: '+v)};
+  q('.rn').onclick=rename;ni.addEventListener('keydown',e=>{if(e.key==='Enter')rename()});
+  const bk=q('.bk');
+  q('.ex').onclick=()=>{
+    const json=JSON.stringify({v:1,profile:P,fs:FS},null,1);bk.value=json;
+    try{const a=el('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download='laggeros-backup.json';document.body.append(a);a.click();a.remove();toast('backup downloaded')}
+    catch(e){toast('download blocked — copy the text below')}
+  };
+  q('.im').onclick=()=>{
+    try{
+      const o=JSON.parse(bk.value);if(!o||typeof o!=='object'||!o.profile)throw 0;
+      const np=Object.assign(defP(),o.profile);
+      ['xp','cmds','files','saves','sweeps','netfails','boots','minutes'].forEach(k=>{np[k]=Math.max(0,Number(np[k])||0)});
+      np.name=String(np.name||'lagger').replace(/[^\w .\-]/g,'').slice(0,16)||'lagger';
+      np.avatar=AVS.includes(np.avatar)?np.avatar:'◉';
+      if(!np.ach||typeof np.ach!=='object')np.ach={};
+      P=np;if(o.fs&&o.fs.t==='d'&&o.fs.c){FS=o.fs;save()}
+      saveP();refreshProfile();toast('backup imported');
+    }catch(e){toast('import failed: not a valid backup')}
+  };
+  q('.rp').onclick=()=>modal('Reset profile (level, XP, badges)? Files are kept.',{ok:'reset'},()=>{P=defP();saveP();refreshProfile();toast('profile reset')});
+  const upd=()=>{
+    const L=levelOf(P.xp),lo=lvBase(L),hi=lvNext(L);
+    q('.av').textContent=P.avatar;q('.pn').textContent=P.name;q('.pt').textContent=titleOf(L);
+    q('.lv').textContent='LEVEL '+L;q('.xpt').textContent=`${P.xp-lo} / ${hi-lo} XP`;
+    q('.xb').style.width=((P.xp-lo)/(hi-lo)*100)+'%';
+    const stats=[['Total XP',P.xp],['Commands',P.cmds],['Files made',P.files],['Notes saved',P.saves],['Radar sweeps',P.sweeps],['Minutes offline',P.minutes],['Boots',P.boots],['Net attempts',P.netfails],['Badges',Object.keys(P.ach).length+'/'+ACH.length]];
+    q('.grid').innerHTML=stats.map(([n,v])=>`<div><b>${esc(v)}</b><span>${n}</span></div>`).join('');
+    [...avs.children].forEach(b=>b.classList.toggle('sel',b.textContent===P.avatar));
+    q('.ach').innerHTML=ACH.map(a=>`<div class="${P.ach[a.id]?'on':'off'}"><span>${P.ach[a.id]?'■':'□'} ${a.n}</span><span>${a.d}</span></div>`).join('');
+    q('.sto').innerHTML=store.ok?'Saved on this laptop (browser local storage). Nothing leaves the machine.':'<span class="red">Browser is blocking storage — progress lasts this session only. Open the file directly from disk, or use export backup.</span>';
+    if(document.activeElement!==ni)ni.value=P.name;
+  };
+  profSubs.add(upd);upd();
+  const o=openWin('Profile',w,{w:440,h:520});o.onclose=()=>profSubs.delete(upd);return o;
+}
+
+/* ---------- apps ---------- */
+function appTerminal(){
+  const t=el('div','term');
+  let cwd='/home/lagger',hist=[],hi=0;
+  const out=(s,c='o')=>{const d=el('div','o '+c);d.textContent=s;t.insertBefore(d,pr)};
+  const pr=el('div','pr');
+  const ps=el('span');const inp=el('input');inp.spellcheck=false;inp.autocomplete='off';
+  pr.append(ps,inp);t.append(pr);
+  const upd=()=>ps.textContent=`lagger@void:${cwd==='/home/lagger'?'~':cwd}$`;
+  upd();
+  out('LaggerOS shell. Type "help". There is nothing out there.','d');
+  t.addEventListener('click',()=>inp.focus());
+  const cmds={
+    help(){return `commands:
+  ls [path]  cd <path>  pwd  cat <file>  mkdir <dir>  touch <file>
+  rm <path>  echo <text> [> file]  write <file> <text>  cp <a> <b>  mv <a> <b>
+  tree  du  clear  date  uptime  whoami  hostname  neofetch
+  ping|curl|wget|ssh|ifconfig|netstat   (try them)
+  open <notes|files|monitor|netscan|profile|about>  profile  reset  lag <ms>`},
+    profile(){const L=levelOf(P.xp);return `${P.avatar} ${P.name}  ·  Lv ${L} ${titleOf(L)}\nxp ${P.xp} (next level at ${lvNext(L)})\ncommands ${P.cmds}  files ${P.files}  notes ${P.saves}  badges ${Object.keys(P.ach).length}/${ACH.length}\n"open profile" for the full view.`},
+    pwd(){return cwd},
+    whoami(){return P.name},
+    hostname(){return 'lagger'},
+    date(){return new Date().toString()},
+    uptime(){const s=Math.floor((Date.now()-bootTime)/1000);return `up ${Math.floor(s/60)}m ${s%60}s, 0 connections, 0 packets ever sent`},
+    clear(){[...t.querySelectorAll('.o')].forEach(x=>x.remove());return null},
+    ls(a){const n=node(norm(cwd,a[0]||'.'));if(!n)return ['ls: no such path','e'];
+      if(n.t==='f')return a[0];
+      const k=Object.keys(n.c).sort();return k.length?k.map(x=>n.c[x].t==='d'?x+'/':x).join('  '):'(empty)'},
+    cd(a){const p=norm(cwd,a[0]||'/home/lagger');const n=node(p);if(!n||n.t!=='d')return ['cd: not a directory','e'];cwd=p;upd();return null},
+    cat(a){if(!a[0])return ['cat: missing file','e'];const n=node(norm(cwd,a[0]));if(!n)return ['cat: no such file','e'];if(n.t==='d')return ['cat: is a directory','e'];return n.d},
+    mkdir(a){if(!a[0])return ['mkdir: missing name','e'];const{dir,name}=parentOf(norm(cwd,a[0]));if(!dir||dir.t!=='d')return ['mkdir: bad path','e'];if(name in dir.c)return ['mkdir: exists','e'];dir.c[name]={t:'d',c:{}};save();return null},
+    touch(a){if(!a[0])return ['touch: missing name','e'];const{dir,name}=parentOf(norm(cwd,a[0]));if(!dir||dir.t!=='d')return ['touch: bad path','e'];if(!(name in dir.c))dir.c[name]={t:'f',d:''};save();return null},
+    rm(a){if(!a[0])return ['rm: missing path','e'];const p=norm(cwd,a[0]);if(p==='/')return ['rm: no.','e'];const{dir,name}=parentOf(p);if(!dir||!(name in dir.c))return ['rm: no such path','e'];delete dir.c[name];save();return null},
+    write(a){if(a.length<2)return ['write: write <file> <text>','e'];const{dir,name}=parentOf(norm(cwd,a[0]));if(!dir||dir.t!=='d')return ['write: bad path','e'];dir.c[name]={t:'f',d:a.slice(1).join(' ')};save();return null},
+    echo(a){const i=a.indexOf('>');if(i<0)return a.join(' ');const txt=a.slice(0,i).join(' '),f=a[i+1];if(!f)return ['echo: missing target','e'];return cmds.write([f,txt])},
+    cp(a){if(a.length<2)return ['cp: cp <a> <b>','e'];const s=node(norm(cwd,a[0]));if(!s||s.t!=='f')return ['cp: source must be a file','e'];const{dir,name}=parentOf(norm(cwd,a[1]));if(!dir)return ['cp: bad target','e'];dir.c[name]={t:'f',d:s.d};save();return null},
+    mv(a){const r=cmds.cp(a);if(r)return r;return cmds.rm([a[0]])},
+    tree(){const l=[];const w=(n,p)=>Object.keys(n.c).sort().forEach((k,i,arr)=>{const last=i===arr.length-1;l.push(p+(last?'└─ ':'├─ ')+k+(n.c[k].t==='d'?'/':''));if(n.c[k].t==='d')w(n.c[k],p+(last?'   ':'│  '))});l.push('/');w(node(cwd),'');return l.join('\n')},
+    du(){return size(FS)+' bytes used. all of it yours.'},
+    neofetch(){return `   _                            ${'lagger@void'}
+  | |    __ _  __ _  __ _  ___ _ __   ----------
+  | |   / _\` |/ _\` |/ _\` |/ _ \\ '__|  OS: LaggerOS 0.1 (air-gapped)
+  | |__| (_| | (_| | (_| |  __/ |     Kernel: lagger-kernel 0.1
+  |_____\\__,_|\\__, |\\__, |\\___|_|     Uptime: ${Math.floor((Date.now()-bootTime)/60000)} min
+              |___/ |___/             Network: none. by design.
+                                      Telemetry: does not exist
+                                      Radios: removed`},
+    ifconfig(){return 'lo0: flags=LOOPBACK  inet 127.0.0.1\n(no other interfaces. no antennae. no port.)'},
+    netstat(){return 'Active connections: 0\nListening: 0\nEstablished: 0\nYou are alone.'},
+    ping(a){return [`ping: ${a[0]||'host'}: Network is unreachable (there is no network)`,'e']},
+    curl(a){return [`curl: (6) could not resolve host: ${a[0]||'?'}\nthe world is not available here.`,'e']},
+    wget(a){return cmds.curl(a)},
+    ssh(a){return ['ssh: connect: no route to anywhere','e']},
+    open(a){const m={notes:()=>appNotes(),files:()=>appFiles(),monitor:()=>appMonitor(),netscan:()=>appNetscan(),terminal:()=>appTerminal(),profile:()=>appProfile(),about:()=>appAbout()};if(!m[a[0]])return ['open: notes | files | monitor | netscan | terminal | profile | about','e'];m[a[0]]();return null},
+    reset(){store.del(KEY);FS=defaultFS();save();cwd='/home/lagger';upd();return 'filesystem wiped to factory state. (profile kept)'},
+    lag(a){const v=parseInt(a[0]);if(isNaN(v)||v<0||v>3000)return ['lag: lag <0-3000> (ms of artificial latency)','e'];LAG=v;return `input latency set to ${v}ms. as the name demands.`}
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='ArrowUp'){if(hi>0)inp.value=hist[--hi]||'';e.preventDefault();return}
+    if(e.key==='ArrowDown'){inp.value=hist[++hi]||'';e.preventDefault();return}
+    if(e.key!=='Enter')return;
+    const line=inp.value.trim();inp.value='';
+    const run=()=>{
+      out(ps.textContent+' '+line,'a');
+      if(!line)return;
+      hist.push(line);hi=hist.length;
+      const a=line.split(/\s+/),c=a.shift();
+      if(!cmds[c]){out(`${c}: command not found`,'e');}
+      else{
+        const before=countNodes();
+        const r=cmds[c](a);if(r){Array.isArray(r)?out(r[0],r[1]):out(r)}
+        P.cmds++;if(['ping','curl','wget','ssh','ifconfig','netstat'].includes(c))P.netfails++;
+        creditFiles(before);addXP(2);
+      }
+      t.scrollTop=t.scrollHeight;
+    };
+    LAG?setTimeout(run,LAG):run();
+  });
+  const o=openWin('Terminal',t,{w:600,h:380});setTimeout(()=>inp.focus(),30);return o;
+}
+
+function appNotes(path){
+  const w=el('div','notes');
+  const h=el('div','h');const pi=el('input');pi.value=path||'/home/lagger/untitled.txt';
+  const sv=el('button','btn','save');h.append(pi,sv);
+  const ta=el('textarea');ta.spellcheck=false;
+  const st=el('div','st','—');
+  w.append(h,ta,st);
+  const load=()=>{const n=node(norm('/',pi.value.trim()));ta.value=n&&n.t==='f'?n.d:'';st.textContent=n&&n.t==='f'?'opened':'new file — save to create it'};
+  const doSave=()=>{
+    const p=norm('/',pi.value.trim());const{dir,name}=parentOf(p);
+    if(!name||!dir||dir.t!=='d'){st.textContent='bad path (folder must exist)';return}
+    if(dir.c[name]&&dir.c[name].t==='d'){st.textContent='that path is a folder';return}
+    const before=countNodes();
+    dir.c[name]={t:'f',d:ta.value};save();pi.value=p;
+    st.textContent=(store.ok?'saved on this laptop ':'saved (memory only) ')+new Date().toLocaleTimeString();
+    P.saves++;creditFiles(before);addXP(5);
+  };
+  sv.onclick=doSave;pi.onchange=load;
+  ta.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();doSave()}});
+  load();
+  return openWin('Notes',w,{w:480,h:340});
+}
+
+function appFiles(){
+  let cwd='/home/lagger';
+  const w=el('div','files');
+  const hp=el('div','fpath');const pth=el('em');
+  const up=el('button','btn','..'),nf=el('button','btn','+file'),nd=el('button','btn','+dir');
+  hp.append(up,pth,nf,nd);
+  const list=el('div','flist');w.append(hp,list);
+  function draw(){
+    pth.textContent=cwd;list.innerHTML='';
+    const n=node(cwd);
+    Object.keys(n.c).sort((a,b)=>(n.c[b].t==='d')-(n.c[a].t==='d')||a.localeCompare(b)).forEach(k=>{
+      const c=n.c[k],r=el('div','row');
+      r.innerHTML=`<span class="n ${c.t==='d'?'dir':''}">${c.t==='d'?'▸ ':'· '}${esc(k)}</span><span class="s">${size(c)}b</span><span class="x" title="delete">✕</span>`;
+      r.onclick=e=>{
+        if(e.target.classList.contains('x')){delete n.c[k];save();draw();return}
+        const p=norm(cwd,k);c.t==='d'?(cwd=p,draw()):appNotes(p);
+      };
+      list.append(r);
+    });
+    if(!Object.keys(n.c).length)list.innerHTML='<div class="pad dm">empty.</div>';
+  }
+  up.onclick=()=>{cwd=norm(cwd,'..');draw()};
+  const mk=(kind)=>ask(kind==='f'?'New file name':'New folder name','',v=>{
+    const k=(v||'').trim().replace(/\//g,'');
+    if(!k)return;
+    const n=node(cwd);
+    if(k in n.c){toast('already exists: '+k);return}
+    const before=countNodes();
+    n.c[k]=kind==='f'?{t:'f',d:''}:{t:'d',c:{}};
+    save();creditFiles(before);addXP(0);draw();
+  });
+  nf.onclick=()=>mk('f');
+  nd.onclick=()=>mk('d');
+  draw();return openWin('Files',w,{w:420,h:330});
+}
+
+function appMonitor(){
+  const w=el('div','pad');
+  const rows=[['CPU',0],['MEM',0],['DISK (virtual)',0]].map(([n])=>{
+    const m=el('div','meter',`<div class="l"><span>${n}</span><span>0%</span></div><div class="b"><i></i></div>`);w.append(m);return m});
+  const net=el('div','','');w.append(net);
+  const tick=()=>{
+    const v=[8+Math.random()*14,22+Math.random()*6,Math.min(99,size(FS)/2000)];
+    rows.forEach((m,i)=>{m.querySelector('i').style.width=v[i]+'%';m.querySelector('.l span:last-child').textContent=v[i].toFixed(0)+'%'});
+    net.innerHTML=`<span class="dm">NETWORK</span>\n<span class="red">rx 0 B   tx 0 B   carriers 0</span>\n<span class="dm">last packet: never</span>`.replace(/\n/g,'<br>');
+  };
+  tick();const iv=setInterval(tick,1000);
+  const o=openWin('Monitor',w,{w:340,h:260});o.onclose=()=>clearInterval(iv);return o;
+}
+
+function appNetscan(){
+  const w=el('div','pad');
+  const cv=el('canvas','radar');cv.width=240;cv.height=240;
+  const msg=el('div','','<span class="am">scanning 0.0 – 6.0 GHz…</span>');
+  w.append(cv,msg);
+  const g=cv.getContext('2d');let a=0,count=0,run=true;
+  const draw=()=>{
+    if(!run)return;
+    g.fillStyle='rgba(5,6,7,.18)';g.fillRect(0,0,240,240);
+    g.strokeStyle='#2a2616';g.lineWidth=1;
+    [30,60,90,115].forEach(r=>{g.beginPath();g.arc(120,120,r,0,7);g.stroke()});
+    g.beginPath();g.moveTo(120,0);g.lineTo(120,240);g.moveTo(0,120);g.lineTo(240,120);g.stroke();
+    g.strokeStyle='#ffb000';g.lineWidth=2;g.beginPath();g.moveTo(120,120);g.lineTo(120+Math.cos(a)*115,120+Math.sin(a)*115);g.stroke();
+    a+=.05;
+    if(a>6.28){a=0;count++;onSweep();msg.innerHTML=`<span class="am">sweep ${count}</span> — <span class="red">0 carriers, 0 access points, 0 towers. nothing answers.</span>`}
+    requestAnimationFrame(draw);
+  };draw();
+  const o=openWin('Netscan',w,{w:300,h:360});o.onclose=()=>run=false;return o;
+}
+
+function appAbout(){
+  const w=el('div','pad',`<div class="am" style="font-size:18px">LaggerOS 0.1</div><br>
+  A system severed from the digital world.<br><br>
+  <span class="dm">network stack</span> &nbsp;<span class="red">not compiled</span><br>
+  <span class="dm">telemetry</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="red">does not exist</span><br>
+  <span class="dm">updates</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="red">never</span><br>
+  <span class="dm">storage</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;browser-local only<br><br>
+  <span class="dm">Every request for the outside world fails — on purpose.</span>`);
+  return openWin('About',w,{w:380,h:280});
+}
+
+/* ---------- global: artificial lag + offline enforcement ---------- */
+let LAG=0;
+// This OS has no uplink: block any outbound fetch/XHR/WebSocket from inside the shell.
+const refuse=()=>Promise.reject(new TypeError('LaggerOS: uplink severed'));
+window.fetch=refuse;
+window.XMLHttpRequest=function(){throw new Error('LaggerOS: uplink severed')};
+window.WebSocket=function(){throw new Error('LaggerOS: uplink severed')};
+
+/* ---------- desktop wiring ---------- */
+/* one window per utility app: reopening focuses the existing one */
+const OPEN={};
+const single=(k,fn)=>(...a)=>{
+  const e=OPEN[k];if(e&&e.win.isConnected){e.win.style.display='';e.focus();return e}
+  const o=fn(...a);OPEN[k]=o;const pc=o.onclose;o.onclose=()=>{delete OPEN[k];pc&&pc()};return o;
+};
+appProfile=single('profile',appProfile);
+appMonitor=single('monitor',appMonitor);
+appNetscan=single('netscan',appNetscan);
+appAbout=single('about',appAbout);
+
+const apps=[['▮','Terminal',()=>appTerminal()],['▤','Files',()=>appFiles()],['✎','Notes',()=>appNotes()],['☻','Profile',()=>appProfile()],['▥','Monitor',()=>appMonitor()],['◎','Netscan',()=>appNetscan()],['?','About',()=>appAbout()]];
+apps.forEach(([g,n,f])=>{const i=el('div','icon',`<b>${g}</b><span>${n}</span>`);i.onclick=f;$('#icons').append(i)});
+$('#net').onclick=()=>appNetscan();
+$('#chip').onclick=()=>appProfile();
+$('#pwr').onclick=()=>modal('Power',{buttons:[
+  ['restart',()=>location.reload()],
+  ['close all windows',()=>wins.slice().forEach(k=>k.win.querySelector('.cl').click())],
+  ['wipe ALL data',()=>modal('Delete every file AND your profile from this laptop? This cannot be undone.',{ok:'wipe everything'},()=>{store.del(KEY);store.del(PKEY);location.reload()})]
+]});
+setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString([], {hour12:false})+'  OFFLINE',1000);
+refreshProfile();
+
+/* ---------- boot ---------- */
+const lines=[
+ ['LAGGER-BIOS 0.1  —  memory check ........ ','ok','OK'],
+ ['mounting virtual disk ................... ','ok','OK'],
+ ['loading kernel: lagger-kernel 0.1 ....... ','ok','OK'],
+ ['probing network interfaces .............. ','bad','NONE FOUND'],
+ ['probing radios (wifi/bt/cell) ........... ','bad','REMOVED'],
+ ['starting telemetry daemon ............... ','bad','DOES NOT EXIST'],
+ ['starting update service ................. ','bad','REFUSED'],
+ ['severing uplink ......................... ','ok','DONE'],
+ ['','dim','you are now alone. welcome to LaggerOS.']
+];
+const boot=$('#boot');let bi=0,done=false;
+function finish(){if(done)return;done=true;boot.style.transition='opacity .5s';boot.style.opacity=0;setTimeout(()=>boot.remove(),500);appTerminal();onBoot()}
+function step(){
+  if(done)return;
+  if(bi>=lines.length){setTimeout(finish,700);return}
+  const[l,c,r]=lines[bi++];
+  boot.innerHTML+=esc(l)+`<span class="${c}">${esc(r)}</span>\n`;
+  setTimeout(step,260+Math.random()*320);
+}
+boot.addEventListener('click',finish);step();
+</script>
+</body>
+</html>
