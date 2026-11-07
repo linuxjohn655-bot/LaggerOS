@@ -24,7 +24,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font
   background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);mix-blend-mode:multiply}
 #mark{position:absolute;right:28px;bottom:22px;text-align:right;color:#2a2616;font-size:64px;font-weight:700;letter-spacing:-3px;user-select:none;line-height:1}
 #mark small{display:block;font-size:11px;letter-spacing:3px;color:#3a3420;font-weight:400;margin-top:6px}
-.icons{position:absolute;left:18px;top:18px;display:grid;gap:14px}
+.icons{position:absolute;left:18px;top:18px;bottom:18px;display:grid;gap:10px;grid-auto-flow:column;grid-template-rows:repeat(auto-fill,74px);grid-auto-columns:84px;align-content:start;column-gap:8px}
 .icon{width:84px;text-align:center;cursor:pointer;padding:8px 4px;border:1px solid transparent}
 .icon:hover{border-color:var(--line);background:rgba(255,176,0,.05)}
 .icon b{display:block;font-size:26px;color:var(--amber);font-weight:400}
@@ -42,6 +42,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font
 #bar{position:fixed;left:0;right:0;bottom:0;height:34px;background:#0a0b0d;border-top:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:0 8px;z-index:8000}
 #bar .task{border:1px solid var(--line);padding:2px 10px;cursor:pointer;color:var(--dim);background:none;font:inherit}
 #bar .task.on{color:var(--amber);border-color:var(--amber)}
+#tasks .task{flex:0 1 auto;min-width:34px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#chip,#net,#clock,#pwr,#bat{flex:none}
+#bat{color:var(--dim);font-size:11px;letter-spacing:1px;padding:2px 8px;border:1px solid var(--line);cursor:pointer;white-space:nowrap}
+#bat:hover{border-color:var(--amber)}#bat.lo{color:var(--red);border-color:var(--red);animation:bl 1s steps(2) infinite}#bat.ch{color:var(--green)}
 #bar .sp{flex:1}
 #net{color:var(--red);letter-spacing:1px;font-size:11px;cursor:pointer}
 #net:before{content:"";display:inline-block;width:7px;height:7px;background:var(--red);margin-right:6px;animation:bl 1.2s steps(2) infinite}
@@ -86,7 +90,21 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font
 #pwr{margin-left:4px}
 .toast{position:fixed;right:16px;bottom:48px;z-index:9500;background:#17120a;border:1px solid var(--amber);color:var(--amber);padding:8px 14px;box-shadow:6px 6px 0 rgba(0,0,0,.6);animation:tin .25s steps(5)}
 @keyframes tin{from{transform:translateX(30px);opacity:0}}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9800;display:flex;align-items:center;justify-content:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10100;display:flex;align-items:center;justify-content:center}
+.auth{position:fixed;inset:0;z-index:10000;background:radial-gradient(ellipse at 50% 110%,#1a1408 0,#050607 60%);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.abox{width:360px;max-width:100%;border:1px solid var(--amber);background:var(--panel);padding:22px;box-shadow:10px 10px 0 rgba(0,0,0,.6)}
+.abox h2{color:var(--amber);font-weight:400;font-size:22px;letter-spacing:3px;margin-bottom:2px}
+.abox .sub{color:var(--dim);margin-bottom:16px;font-size:12px}
+.abox label{display:block;color:var(--dim);font-size:11px;letter-spacing:2px;margin:10px 0 3px}
+.abox input{width:100%;background:#050607;border:1px solid var(--line);color:var(--ink);padding:7px 9px;font:inherit;outline:0}
+.abox input:focus{border-color:var(--amber)}
+.abox .pw{display:flex;gap:6px}.abox .pw .btn{white-space:nowrap}
+.abox .err{color:var(--red);min-height:20px;margin-top:10px;font-size:12px}
+.abox .go{width:100%;margin-top:6px;padding:8px;background:var(--amber);color:#000;border-color:var(--amber);font-weight:700;letter-spacing:2px}
+.abox .go:disabled{opacity:.45;cursor:not-allowed}
+.abox .fine{color:var(--dim);font-size:11px;margin-top:14px;line-height:1.5}
+.abox a{color:var(--dim);cursor:pointer;text-decoration:underline}.abox a:hover{color:var(--red)}
+@keyframes shk{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}.abox.shk{animation:shk .35s}
 .modal .box{background:var(--panel);border:1px solid var(--amber);padding:16px;min-width:300px;max-width:90vw;box-shadow:8px 8px 0 rgba(0,0,0,.6)}
 .modal .mt{margin-bottom:10px;color:var(--ink)}
 .modal input{width:100%;background:#050607;border:1px solid var(--line);color:var(--ink);padding:4px 8px;font:inherit;outline:0;margin-bottom:10px}
@@ -109,6 +127,82 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font
 .ach div{padding:4px 8px;border:1px solid var(--line);margin-bottom:4px;display:flex;justify-content:space-between;gap:10px}
 .ach div.on{border-color:var(--amber);color:var(--amber)}
 .ach div.off{color:#4a473f}
+/* music */
+.mus .mt1{font-size:16px;color:var(--amber);min-height:22px}
+.mus canvas{display:block;width:100%;height:70px;background:#050607;border:1px solid var(--line);margin:8px 0}
+.pgb{height:8px;background:#15181c;cursor:pointer;position:relative}.pgb i{display:block;height:100%;background:var(--amber);width:0}
+.tms{display:flex;justify-content:space-between;font-size:11px;margin:3px 0 8px}
+.mc{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.mc input{accent-color:var(--amber);width:90px}
+.mc .btn.on{border-color:var(--amber);color:var(--amber)}
+.ml{border:1px solid var(--line);max-height:170px;overflow:auto}.ml .row.cur{background:rgba(255,176,0,.1);color:var(--amber)}
+.fine2{font-size:11px;margin-top:10px;line-height:1.5}
+#mbtn{flex:none;font-size:15px;padding:0 10px}#mbtn.pl{color:var(--amber);border-color:var(--amber);animation:bl 1s steps(2) infinite}
+/* settings */
+.set{display:flex;flex-direction:column;height:100%}
+.set .sh{display:flex;gap:8px;align-items:center;padding:6px;border-bottom:1px solid var(--line)}
+.set .sq{flex:1;background:#050607;border:1px solid var(--line);color:var(--ink);padding:3px 8px;font:inherit;outline:0}
+.set .stabs{display:flex;gap:4px;flex-wrap:wrap;padding:6px;border-bottom:1px solid var(--line)}
+.set .stabs .btn.on{border-color:var(--amber);color:var(--amber);background:#17120a}
+.set .sl{flex:1;overflow:auto}
+.set .sf{display:flex;gap:6px;padding:6px;border-top:1px solid var(--line)}
+.srow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:6px 10px;border-bottom:1px solid #15181c}
+.srow .sn{flex:1;min-width:0}.srow .sn small{display:block;color:var(--dim);font-size:11px}
+.srow .sc2{display:flex;gap:8px;align-items:center}
+.srow select,.srow input[type=text]{background:#050607;border:1px solid var(--line);color:var(--ink);padding:2px 6px;font:inherit;outline:0;max-width:150px}
+.srow input[type=range]{accent-color:var(--amber);width:120px}
+.tgl{min-width:48px;background:none;border:1px solid var(--line);color:var(--dim);font:inherit;cursor:pointer;padding:1px 6px}
+.tgl.on{border-color:var(--amber);color:#000;background:var(--amber)}
+.tgl:disabled{opacity:.6;cursor:not-allowed}
+.sgh{padding:6px 10px;color:var(--amber);font-size:11px;letter-spacing:2px;background:#0a0b0d;position:sticky;top:0}
+/* calculator */
+.calc{width:100%}.calc .ch{min-height:18px;color:var(--dim);font-size:11px;text-align:right;overflow:hidden;white-space:nowrap}
+.calc .cd{font-size:26px;text-align:right;color:var(--amber);padding:4px 6px;border:1px solid var(--line);background:#050607;margin-bottom:8px;overflow:hidden}
+.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.cg button{background:#0a0b0d;border:1px solid var(--line);color:var(--ink);padding:10px 0;font:inherit;font-size:15px;cursor:pointer}
+.cg button:hover{border-color:var(--amber);color:var(--amber)}.cg button.op{color:var(--amber)}.cg button.eq{background:var(--amber);color:#000}
+/* clock */
+.ctabs{display:flex;gap:6px;margin-bottom:12px}.ctabs .btn.on{border-color:var(--amber);color:var(--amber)}
+.big{font-size:34px;color:var(--amber);letter-spacing:2px;text-align:center;margin:10px 0}
+.crow{display:flex;gap:6px;justify-content:center;margin:8px 0;align-items:center}
+.crow input{width:60px;background:#050607;border:1px solid var(--line);color:var(--ink);padding:3px 6px;font:inherit;outline:0;text-align:center}
+.laps{max-height:120px;overflow:auto;color:var(--dim)}
+/* games */
+.gwrap{text-align:center}.gwrap canvas{display:block;margin:8px auto;border:1px solid var(--line);background:#050607;max-width:100%}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:6px}
+.mg{display:grid;gap:2px;justify-content:center}
+.mg button{width:28px;height:28px;background:#0a0b0d;border:1px solid var(--line);color:var(--ink);font:inherit;cursor:pointer;padding:0;line-height:1}
+.mg button.o{background:#15181c;border-color:#15181c;cursor:default}.mg button.m{background:var(--red);color:#000}.mg button.f{color:var(--amber)}
+.n1{color:#4de1ff}.n2{color:#7dff9b}.n3{color:#ff4d3d}.n4{color:#ff5fd2}.n5,.n6,.n7,.n8{color:#ffb000}
+/* paint */
+.paint{display:flex;flex-direction:column;height:100%}.paint .pt2{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px;border-bottom:1px solid var(--line)}
+.sw{width:18px;height:18px;border:1px solid var(--line);cursor:pointer;padding:0}.sw.sel{outline:2px solid var(--amber);outline-offset:1px}
+.paint .cvw{flex:1;overflow:auto;padding:6px;background:#050607}.paint canvas{background:#050607;border:1px solid var(--line);cursor:crosshair;touch-action:none}
+/* synth */
+.keys{position:relative;height:130px;margin:10px auto;width:max-content}
+.wk{display:inline-block;width:42px;height:130px;background:#d8d2c0;border:1px solid #000;color:#000;vertical-align:top;cursor:pointer;font:inherit;font-size:11px;padding-top:100px}
+.wk.dn{background:var(--amber)}
+.bk2{position:absolute;top:0;width:26px;height:80px;background:#050607;border:1px solid var(--line);cursor:pointer;color:var(--dim);font:inherit;font-size:10px;padding-top:56px;z-index:2}
+.bk2.dn{background:var(--amber);color:#000}
+/* calendar */
+.cal .ch2{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cgd{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cgd .dh{color:var(--dim);font-size:11px;text-align:center}
+.cgd button{background:#0a0b0d;border:1px solid var(--line);color:var(--ink);padding:8px 0;font:inherit;cursor:pointer;position:relative}
+.cgd button:hover{border-color:var(--amber)}.cgd button.td{border-color:var(--amber);color:var(--amber)}.cgd button.hn:after{content:"";position:absolute;right:3px;top:3px;width:5px;height:5px;background:var(--red)}
+.cgd span{display:block}
+/* task manager */
+.tm table{width:100%;border-collapse:collapse}.tm td,.tm th{padding:3px 8px;border-bottom:1px solid #15181c;text-align:left;font-weight:400}.tm th{color:var(--dim);font-size:11px}
+.tm h4{color:var(--dim);font-size:11px;letter-spacing:2px;font-weight:400;margin:10px 0 4px}
+/* browser */
+.brw{display:flex;flex-direction:column;height:100%}.brw .ab{display:flex;gap:6px;padding:6px;border-bottom:1px solid var(--line)}
+.brw .ab input{flex:1;background:#050607;border:1px solid var(--line);color:var(--ink);padding:3px 8px;font:inherit;outline:0}
+.brw .pg{flex:1;overflow:auto;padding:16px}.brw a{color:var(--amber);cursor:pointer;text-decoration:underline}
+/* netscan */
+.ns{display:flex;flex-direction:column;height:100%}.ns .nt{display:flex;gap:4px;padding:6px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ns .nt .btn.on{border-color:var(--amber);color:var(--amber);background:#17120a}.ns .nb{flex:1;overflow:auto;padding:10px}
+.ns .nf2{padding:3px 10px;border-top:1px solid var(--line);color:var(--dim);font-size:11px}
+.ns canvas{display:block;margin:6px auto;max-width:100%}.ns input[type=text]{background:#050607;border:1px solid var(--line);color:var(--ink);padding:2px 6px;font:inherit;outline:0}
+.ns pre{white-space:pre-wrap;color:var(--green);font:inherit}.nrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.ns input[type=range]{accent-color:var(--amber)}
 </style>
 </head>
 <body>
@@ -117,7 +211,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font
   <div class="icons" id="icons"></div>
   <div id="mark">LAGGER<small>AIR-GAPPED / NO UPLINK / NO WORLD</small></div>
 </div>
-<div id="bar"><span id="tasks" style="display:flex;gap:6px"></span><span class="sp"></span><span id="chip" title="Open profile"></span><span id="net" title="Click to scan">UPLINK: SEVERED</span><span id="clock"></span><button class="task" id="pwr" title="Power">⏻</button></div>
+<div id="bar"><span id="tasks" style="display:flex;gap:6px;min-width:0;overflow:hidden"></span><span class="sp"></span><span id="bat" title="Battery">BAT …</span><button class="task" id="mbtn" title="Music">♫</button><span id="chip" title="Open profile"></span><span id="net" title="Click to scan">UPLINK: SEVERED</span><span id="clock"></span><button class="task" id="pwr" title="Power">⏻</button></div>
 <div id="scan"></div>
 
 <script>
@@ -145,10 +239,10 @@ const defaultFS=()=>({t:'d',c:{
   sys:{t:'d',c:{'kernel.log':{t:'f',d:'[0.000] lagger-kernel 0.1 booting\n[0.004] net: stack disabled at compile time\n[0.011] radios: removed\n'}}}
 }});
 /* storage on this laptop (browser local storage); falls back to memory if the browser blocks it */
-const mem={};
+const mem={};let PERSIST=true;
 const store={ok:true,
-  get(k){try{return localStorage.getItem(k)}catch(e){this.ok=false;return mem[k]??null}},
-  set(k,v){try{localStorage.setItem(k,v)}catch(e){this.ok=false;mem[k]=v}},
+  get(k){if(k in mem)return mem[k];try{return localStorage.getItem(k)}catch(e){this.ok=false;return mem[k]??null}},
+  set(k,v){if(!PERSIST&&k!=='laggeros.cfg.v1'&&k!=='laggeros.acct.v1'){mem[k]=v;return}try{localStorage.setItem(k,v);delete mem[k]}catch(e){this.ok=false;mem[k]=v}},
   del(k){try{localStorage.removeItem(k)}catch(e){this.ok=false;delete mem[k]}}};
 try{localStorage.setItem('__t','1');localStorage.removeItem('__t')}catch(e){store.ok=false}
 let FS; try{FS=JSON.parse(store.get(KEY))||defaultFS()}catch(e){FS=defaultFS()}
@@ -179,7 +273,7 @@ function openWin(title,content,{w=520,h=340,x,y}={}){
   win.append(tb,body,rz);
   win.style.width=w+'px';win.style.height=h+'px';
   const n=wins.length;
-  win.style.left=(x??(150+n*28)%Math.max(200,innerWidth-w-40))+'px';
+  win.style.left=(x??(215+n*28)%Math.max(240,innerWidth-w-40))+'px';
   win.style.top=(y??(40+n*26)%Math.max(100,innerHeight-h-80))+'px';
   $('#desk').append(win);
   const task=el('button','task',esc(title));
@@ -188,6 +282,7 @@ function openWin(title,content,{w=520,h=340,x,y}={}){
   wins.push(o);
   const focus=()=>{wins.forEach(k=>{k.win.classList.remove('focus');k.task.classList.remove('on')});win.classList.add('focus');task.classList.add('on');win.style.zIndex=++z;focused=o};
   win.addEventListener('mousedown',focus);
+  win.addEventListener('mouseenter',()=>{if(CFG.ffm&&focused!==o&&win.style.display!=='none')focus()});
   o.focus=focus;
   task.onclick=()=>{
     if(win.style.display==='none'){win.style.display='';focus()}
@@ -204,7 +299,7 @@ function openWin(title,content,{w=520,h=340,x,y}={}){
     }
     focus();
   };
-  tb.addEventListener('dblclick',e=>{if(e.target.tagName!=='BUTTON')mx()});
+  tb.addEventListener('dblclick',e=>{if(CFG.dbl&&e.target.tagName!=='BUTTON')mx()});
   close.onclick=e=>{e.stopPropagation();win.remove();task.remove();wins=wins.filter(k=>k!==o);if(focused===o)focused=null;o.onclose&&o.onclose()};
   tb.addEventListener('mousedown',e=>{
     if(e.target.tagName==='BUTTON')return;
@@ -238,7 +333,7 @@ function modal(text,{input=false,def='',ok='OK',cancel=true,buttons=null}={},cb)
   setTimeout(()=>(inp||row.firstChild).focus(),20);
 }
 const ask=(text,def,cb)=>modal(text,{input:true,def},cb);
-const toast=m=>{const t=el('div','toast');t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3200)};
+const toast=m=>{if(CFG.toasts===false)return;const t=el('div','toast');t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),Number(CFG.toastms)||3200)};
 
 /* ---------- profile / levels (saved on this laptop) ---------- */
 const PKEY='laggeros.profile.v1';
@@ -335,11 +430,14 @@ function appProfile(){
 function appTerminal(){
   const t=el('div','term');
   let cwd='/home/lagger',hist=[],hi=0;
-  const out=(s,c='o')=>{const d=el('div','o '+c);d.textContent=s;t.insertBefore(d,pr)};
+  const out=(s,c='o')=>{if(c==='e'&&CFG.tbell)beep(180,.12,'sawtooth');const d=el('div','o '+c);d.textContent=s;t.insertBefore(d,pr)};
   const pr=el('div','pr');
   const ps=el('span');const inp=el('input');inp.spellcheck=false;inp.autocomplete='off';
   pr.append(ps,inp);t.append(pr);
-  const upd=()=>ps.textContent=`lagger@void:${cwd==='/home/lagger'?'~':cwd}$`;
+  const upd=()=>{
+    const path=cwd==='/home/lagger'?'~':cwd,h=CFG.host||'lagger';
+    ps.textContent={classic:`${h}@void:${path}$`,minimal:'$',arrow:`${path} ❯`,root:`root@${h}:${path}#`}[CFG.prompt]||`${h}@void:${path}$`;
+  };
   upd();
   out('LaggerOS shell. Type "help". There is nothing out there.','d');
   t.addEventListener('click',()=>inp.focus());
@@ -347,13 +445,13 @@ function appTerminal(){
     help(){return `commands:
   ls [path]  cd <path>  pwd  cat <file>  mkdir <dir>  touch <file>
   rm <path>  echo <text> [> file]  write <file> <text>  cp <a> <b>  mv <a> <b>
-  tree  du  clear  date  uptime  whoami  hostname  neofetch
+  tree  du  clear  date  uptime  whoami  hostname  neofetch  battery
   ping|curl|wget|ssh|ifconfig|netstat   (try them)
-  open <notes|files|monitor|netscan|profile|about>  profile  reset  lag <ms>`},
+  open <app>  apps (list apps)  profile  reset  lag <ms>`},
     profile(){const L=levelOf(P.xp);return `${P.avatar} ${P.name}  ·  Lv ${L} ${titleOf(L)}\nxp ${P.xp} (next level at ${lvNext(L)})\ncommands ${P.cmds}  files ${P.files}  notes ${P.saves}  badges ${Object.keys(P.ach).length}/${ACH.length}\n"open profile" for the full view.`},
     pwd(){return cwd},
     whoami(){return P.name},
-    hostname(){return 'lagger'},
+    hostname(){return CFG.host||'lagger'},
     date(){return new Date().toString()},
     uptime(){const s=Math.floor((Date.now()-bootTime)/1000);return `up ${Math.floor(s/60)}m ${s%60}s, 0 connections, 0 packets ever sent`},
     clear(){[...t.querySelectorAll('.o')].forEach(x=>x.remove());return null},
@@ -385,9 +483,16 @@ function appTerminal(){
     curl(a){return [`curl: (6) could not resolve host: ${a[0]||'?'}\nthe world is not available here.`,'e']},
     wget(a){return cmds.curl(a)},
     ssh(a){return ['ssh: connect: no route to anywhere','e']},
-    open(a){const m={notes:()=>appNotes(),files:()=>appFiles(),monitor:()=>appMonitor(),netscan:()=>appNetscan(),terminal:()=>appTerminal(),profile:()=>appProfile(),about:()=>appAbout()};if(!m[a[0]])return ['open: notes | files | monitor | netscan | terminal | profile | about','e'];m[a[0]]();return null},
+    apps(){return Object.keys(REG).join('  ')},
+    battery(){
+      if(!BAT.ready)return 'reading battery…';
+      if(!BAT.ok)return ['battery: not available in this browser (try Chrome, Edge or Opera)','e'];
+      const p=batPct(),n=Math.round(p/5);
+      return `[${'█'.repeat(n)}${'░'.repeat(20-n)}] ${p}%\n${batStatusText()}`;
+    },
+    open(a){const f=REG[(a[0]||'').toLowerCase()];if(!f)return ['open: unknown app. try: '+Object.keys(REG).join(' | '),'e'];f();return null},
     reset(){store.del(KEY);FS=defaultFS();save();cwd='/home/lagger';upd();return 'filesystem wiped to factory state. (profile kept)'},
-    lag(a){const v=parseInt(a[0]);if(isNaN(v)||v<0||v>3000)return ['lag: lag <0-3000> (ms of artificial latency)','e'];LAG=v;return `input latency set to ${v}ms. as the name demands.`}
+    lag(a){const v=parseInt(a[0]);if(isNaN(v)||v<0||v>3000)return ['lag: lag <0-3000> (ms of artificial latency)','e'];setCfg('lag',String(v));return `input latency set to ${v}ms. as the name demands.`}
   };
   inp.addEventListener('keydown',e=>{
     if(e.key==='ArrowUp'){if(hi>0)inp.value=hist[--hi]||'';e.preventDefault();return}
@@ -433,7 +538,19 @@ function appNotes(path){
   sv.onclick=doSave;pi.onchange=load;
   ta.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();doSave()}});
   load();
-  return openWin('Notes',w,{w:480,h:340});
+  const o=openWin('Notes',w,{w:480,h:340});
+  const ms={'5s':5000,'15s':15000,'60s':60000}[CFG.autosave]||0;
+  if(ms){
+    let last=ta.value;
+    const iv=setInterval(()=>{
+      if(ta.value===last)return;
+      const p=norm('/',pi.value.trim()),{dir,name}=parentOf(p);
+      if(!name||!dir||dir.t!=='d'||(dir.c[name]&&dir.c[name].t==='d'))return;
+      dir.c[name]={t:'f',d:ta.value};save();last=ta.value;st.textContent='autosaved '+new Date().toLocaleTimeString();
+    },ms);
+    onClose(o,()=>clearInterval(iv));
+  }
+  return o;
 }
 
 function appFiles(){
@@ -450,7 +567,10 @@ function appFiles(){
       const c=n.c[k],r=el('div','row');
       r.innerHTML=`<span class="n ${c.t==='d'?'dir':''}">${c.t==='d'?'▸ ':'· '}${esc(k)}</span><span class="s">${size(c)}b</span><span class="x" title="delete">✕</span>`;
       r.onclick=e=>{
-        if(e.target.classList.contains('x')){delete n.c[k];save();draw();return}
+        if(e.target.classList.contains('x')){
+          const del=()=>{delete n.c[k];save();draw()};
+          CFG.confirmdel?modal('Delete '+k+'?',{ok:'delete'},del):del();return;
+        }
         const p=norm(cwd,k);c.t==='d'?(cwd=p,draw()):appNotes(p);
       };
       list.append(r);
@@ -487,23 +607,164 @@ function appMonitor(){
 }
 
 function appNetscan(){
-  const w=el('div','pad');
-  const cv=el('canvas','radar');cv.width=240;cv.height=240;
-  const msg=el('div','','<span class="am">scanning 0.0 – 6.0 GHz…</span>');
-  w.append(cv,msg);
-  const g=cv.getContext('2d');let a=0,count=0,run=true;
-  const draw=()=>{
-    if(!run)return;
-    g.fillStyle='rgba(5,6,7,.18)';g.fillRect(0,0,240,240);
-    g.strokeStyle='#2a2616';g.lineWidth=1;
-    [30,60,90,115].forEach(r=>{g.beginPath();g.arc(120,120,r,0,7);g.stroke()});
-    g.beginPath();g.moveTo(120,0);g.lineTo(120,240);g.moveTo(0,120);g.lineTo(240,120);g.stroke();
-    g.strokeStyle='#ffb000';g.lineWidth=2;g.beginPath();g.moveTo(120,120);g.lineTo(120+Math.cos(a)*115,120+Math.sin(a)*115);g.stroke();
-    a+=.05;
-    if(a>6.28){a=0;count++;onSweep();msg.innerHTML=`<span class="am">sweep ${count}</span> — <span class="red">0 carriers, 0 access points, 0 towers. nothing answers.</span>`}
-    requestAnimationFrame(draw);
-  };draw();
-  const o=openWin('Netscan',w,{w:300,h:360});o.onclose=()=>run=false;return o;
+  const w=el('div','ns');
+  w.innerHTML=`<div class="nt"></div><div class="nb"></div><div class="nf2"></div>`;
+  const nt=$('.nt',w),nb=$('.nb',w),nf=$('.nf2',w);
+  const TABS=[['radar','Radar'],['spec','Spectrum'],['ports','Ports'],['trace','Trace'],['log','Log']];
+  const LOG=[];let tab='radar',stop=null;
+  const stamp=()=>new Date().toLocaleTimeString([],{hour12:false});
+  const log=m=>{LOG.push(stamp()+'  '+m);if(LOG.length>300)LOG.shift()};
+  const foot=m=>{nf.textContent=m};
+  let sweeps=0,live=true;
+  TABS.forEach(([k,l])=>{const b=el('button','btn',l);b.dataset.k=k;b.onclick=()=>show(k);nt.append(b)});
+  function show(k){
+    if(stop){stop();stop=null}
+    tab=k;[...nt.children].forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+    nb.innerHTML='';
+    ({radar,spec,ports,trace,logTab})[k==='log'?'logTab':k]();
+  }
+
+  /* ---- radar ---- */
+  function radar(){
+    nb.innerHTML=`<canvas width="240" height="240"></canvas><div class="msg am" style="text-align:center;min-height:36px">scanning 0.0 – 6.0 GHz…</div>
+    <div class="nrow" style="justify-content:center"><button class="btn rp">pause</button><button class="btn dp">deep scan</button>
+    <label class="dm">speed <input type="range" class="sp" min="1" max="12" value="5"></label><label class="dm"><input type="checkbox" class="ph" checked> phantoms</label></div>
+    <div class="deep" style="text-align:center;min-height:18px"></div>`;
+    const cv=$('canvas',nb),g=cv.getContext('2d'),msg=$('.msg',nb),deep=$('.deep',nb);
+    let a=0,blips=[],paused=false,raf,run=true,deepLeft=0,deepTotal=0;
+    const acc=accent();
+    $('.rp',nb).onclick=e=>{paused=!paused;e.target.textContent=paused?'resume':'pause'};
+    $('.dp',nb).onclick=()=>{if(deepLeft)return;deepTotal=deepLeft=5;log('deep scan started (5 sweeps, all bands)');deep.innerHTML='<span class="am">deep scan…</span>'};
+    const frame=()=>{
+      if(!run)return;
+      const sp=Number($('.sp',nb).value)/100*(deepLeft?3:1);
+      g.fillStyle='rgba(5,6,7,.16)';g.fillRect(0,0,240,240);
+      g.strokeStyle='#2a2616';g.lineWidth=1;
+      [30,60,90,115].forEach(r=>{g.beginPath();g.arc(120,120,r,0,7);g.stroke()});
+      g.beginPath();g.moveTo(120,0);g.lineTo(120,240);g.moveTo(0,120);g.lineTo(240,120);g.stroke();
+      if(!paused){
+        a+=sp;
+        if(a>6.283){
+          a=0;sweeps++;P.sweeps++;addXP(1);
+          const m=`sweep ${sweeps}: 0 carriers, 0 access points, 0 towers. nothing answers.`;
+          msg.textContent=m;log(m);foot('sweeps this session: '+sweeps);
+          if(deepLeft){deepLeft--;deep.innerHTML=deepLeft?`<span class="am">deep scan… ${deepTotal-deepLeft}/${deepTotal}</span>`:'<span class="red">deep scan complete: 0 signals across 5 bands. the silence is total.</span>';if(!deepLeft){log('deep scan complete: 0 signals');beep(330,.2,'triangle')}}
+        }
+        if($('.ph',nb).checked&&Math.random()<.006){
+          const ang=Math.random()*6.283,rad=25+Math.random()*85;
+          blips.push({x:120+Math.cos(ang)*rad,y:120+Math.sin(ang)*rad,life:1});
+          const f=(Math.random()*6).toFixed(2);log(`phantom echo near ${f} GHz — dismissed (no hardware)`);
+        }
+      }
+      g.strokeStyle=acc;g.lineWidth=2;g.beginPath();g.moveTo(120,120);g.lineTo(120+Math.cos(a)*115,120+Math.sin(a)*115);g.stroke();
+      blips=blips.filter(b=>(b.life-=.004)>0);
+      blips.forEach(b=>{g.fillStyle=`rgba(255,77,61,${b.life})`;g.beginPath();g.arc(b.x,b.y,3,0,7);g.fill()});
+      raf=requestAnimationFrame(frame);
+    };
+    frame();stop=()=>{run=false;cancelAnimationFrame(raf)};
+    foot('sweeps this session: '+sweeps);
+  }
+
+  /* ---- spectrum waterfall ---- */
+  function spec(){
+    nb.innerHTML=`<canvas width="360" height="220" style="cursor:crosshair"></canvas><div class="nrow" style="justify-content:center"><button class="btn rp">pause</button><span class="dm rd">hover for frequency</span></div><div class="dm" style="text-align:center">noise floor: −∞ dBm · every band is empty</div>`;
+    const cv=$('canvas',nb),g=cv.getContext('2d'),rd=$('.rd',nb);
+    const W=360,H=220,top=24;
+    g.fillStyle='#050607';g.fillRect(0,0,W,H);
+    let paused=false,iv;
+    const bands=[['BT',2.4,2.48],['Wi-Fi 2.4',2.4,2.5],['Wi-Fi 5',5.15,5.85],['LTE',.7,2.6],['GPS',1.57,1.58]];
+    const hex=accent();
+    const tick=()=>{
+      if(paused)return;
+      const img=g.getImageData(0,top,W,H-top-1);g.putImageData(img,0,top+1);
+      for(let x=0;x<W;x++){
+        const v=Math.random()<.04?Math.random()*.5:Math.random()*.12;
+        g.fillStyle=hex;g.globalAlpha=Math.min(1,v);g.fillRect(x,top,1,1);
+      }
+      g.globalAlpha=1;
+      g.fillStyle='#050607';g.fillRect(0,0,W,top);
+      g.fillStyle='#6f6c62';g.font='10px monospace';
+      for(let f=0;f<=6;f++){const x=f/6*(W-1);g.fillRect(x,top-6,1,6);g.fillText(f+'G',Math.min(W-16,x+2),12)}
+      g.strokeStyle='#2a2616';bands.forEach(([n,a,b])=>{g.strokeRect(a/6*W,top-3,Math.max(2,(b-a)/6*W),3)});
+    };
+    iv=setInterval(tick,90);
+    $('.rp',nb).onclick=e=>{paused=!paused;e.target.textContent=paused?'resume':'pause'};
+    cv.onmousemove=e=>{
+      const r=cv.getBoundingClientRect(),f=((e.clientX-r.left)/r.width*6);
+      const hit=bands.filter(([n,a,b])=>f>=a&&f<=b).map(b=>b[0]).join(', ');
+      rd.textContent=f.toFixed(2)+' GHz'+(hit?'  ('+hit+' band)':'')+'  —  empty';
+    };
+    stop=()=>clearInterval(iv);
+    log('spectrum analyzer opened');foot('waterfall: 0–6 GHz, resolution 17 MHz/px');
+  }
+
+  /* ---- ports ---- */
+  function ports(){
+    nb.innerHTML=`<div class="nrow">target <input type="text" class="tg" value="127.0.0.1" size="14"> ports <input type="text" class="a" value="1" size="4">–<input type="text" class="b" value="1024" size="5"> <button class="btn go">scan</button><button class="btn sub">scan subnet</button></div>
+    <div class="meter" style="margin:6px 0"><div class="b"><i class="bar"></i></div></div><pre class="po">idle.</pre>`;
+    const po=$('.po',nb),bar=$('.bar',nb);let iv=null;
+    const done=()=>{clearInterval(iv);iv=null};
+    $('.go',nb).onclick=()=>{
+      done();
+      let a=Math.max(1,parseInt($('.a',nb).value)||1),b=Math.min(65535,parseInt($('.b',nb).value)||1024);
+      if(b<a)[a,b]=[b,a];if(b-a>5000)b=a+5000;
+      const tg=$('.tg',nb).value.trim().slice(0,40)||'127.0.0.1';
+      const n=b-a+1;let i=0;
+      po.textContent=`scanning ${tg} ports ${a}-${b} …`;log(`port scan ${tg} ${a}-${b}`);
+      iv=setInterval(()=>{
+        i=Math.min(n,i+Math.ceil(n/40));bar.style.width=(i/n*100)+'%';
+        if(i>=n){
+          done();P.netfails++;addXP(2);
+          const lo=/^(127\.|localhost)/.test(tg);
+          const m=`scan of ${tg} complete\n  open: 0\n  closed: ${n}\n  filtered: 0\n${lo?'  note: loopback only — and nothing listens on it.':'  note: no route to host — there is no network stack.'}`;
+          po.textContent=m;log(`port scan ${tg}: 0 open / ${n} closed`);beep(330,.15,'triangle');
+        }else po.textContent=`scanning ${tg} … ${Math.floor(i/n*100)}% (${a+i-1})`;
+      },60);
+    };
+    $('.sub',nb).onclick=()=>{
+      done();let i=0;const N=254;po.textContent='sweeping 192.168.0.0/24 …';log('subnet sweep 192.168.0.0/24');
+      iv=setInterval(()=>{
+        i=Math.min(N,i+9);bar.style.width=(i/N*100)+'%';
+        if(i>=N){done();P.netfails++;addXP(2);po.textContent='sweep complete\n  hosts up: 0 / 254\n  gateway: none\n  you are the only host on this network.';log('subnet sweep: 0 hosts up')}
+        else po.textContent=`sweeping 192.168.0.${i} … no reply`;
+      },50);
+    };
+    stop=done;foot('local ports only · no outbound traffic is ever sent');
+  }
+
+  /* ---- trace ---- */
+  function trace(){
+    nb.innerHTML=`<div class="nrow">host <input type="text" class="tg" value="example.com" size="22"> <button class="btn go">trace</button></div><pre class="po">idle.</pre>`;
+    const po=$('.po',nb);let timers=[];
+    stop=()=>timers.forEach(clearTimeout);
+    $('.go',nb).onclick=()=>{
+      timers.forEach(clearTimeout);timers=[];
+      const h=$('.tg',nb).value.trim().slice(0,60)||'localhost';
+      const lines=[`traceroute to ${h}, 30 hops max`,' 1  *  *  *   (no interface)',' 2  *  *  *   (no gateway)',' 3  *  *  *   (no ISP)',' 4  *  *  *   (no backbone)',' 5  *  *  *   (no world)','',`traceroute: ${h}: no route to anywhere`];
+      po.textContent='';log('traceroute '+h);P.netfails++;addXP(1);
+      lines.forEach((l,i)=>timers.push(setTimeout(()=>{po.textContent+=l+'\n';if(i)beep(260,.04,'square',.5)},i*(CFG.lag?Math.max(300,+CFG.lag):450))));
+    };
+    foot('every hop times out');
+  }
+
+  /* ---- log ---- */
+  function logTab(){
+    nb.innerHTML=`<div class="nrow"><button class="btn cl2">clear</button><button class="btn sv">save to /home/lagger/netscan.log</button></div><pre class="po" style="max-height:230px;overflow:auto"></pre>`;
+    const po=$('.po',nb);
+    const draw=()=>{po.textContent=LOG.length?LOG.join('\n'):'(no events yet. nothing has happened.)';po.scrollTop=po.scrollHeight};
+    $('.cl2',nb).onclick=()=>{LOG.length=0;draw()};
+    $('.sv',nb).onclick=()=>{
+      const home=node('/home/lagger');const before=countNodes();
+      home.c['netscan.log']={t:'f',d:LOG.join('\n')||'(empty)'};save();creditFiles(before);toast('saved netscan.log');
+    };
+    draw();const iv=setInterval(draw,1000);stop=()=>clearInterval(iv);
+    foot(LOG.length+' events logged');
+  }
+
+  const o=openWin('Netscan',w,{w:420,h:470});
+  show('radar');
+  onClose(o,()=>{if(stop)stop()});
+  return o;
 }
 
 function appAbout(){
@@ -515,6 +776,883 @@ function appAbout(){
   <span class="dm">storage</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;browser-local only<br><br>
   <span class="dm">Every request for the outside world fails — on purpose.</span>`);
   return openWin('About',w,{w:380,h:280});
+}
+
+/* ---------- settings engine (saved on this laptop) ---------- */
+const CKEY='laggeros.cfg.v1';
+const ACCENTS={amber:'#ffb000',green:'#7dff9b',cyan:'#4de1ff',magenta:'#ff5fd2',red:'#ff4d3d',white:'#f2efe6'};
+const BGS={void:'#07080a',navy:'#06101c',coal:'#000000',plum:'#12081a',moss:'#08130c'};
+const FONTS={system:'ui-monospace,"SF Mono",Menlo,Consolas,monospace',courier:'"Courier New",Courier,monospace',serif:'Georgia,"Times New Roman",serif',sans:'system-ui,-apple-system,"Segoe UI",sans-serif'};
+const T=(id,g,l,d,h)=>({id,g,l,d,h,t:'tog'});
+const S=(id,g,l,d,o,h)=>({id,g,l,d,o,h,t:'sel'});
+const R=(id,g,l,d,min,max,step,h)=>({id,g,l,d,min,max,step,h,t:'rng'});
+const X=(id,g,l,d,h)=>({id,g,l,d,h,t:'txt'});
+const SET=[
+ S('accent','Display','Accent color','amber',Object.keys(ACCENTS)),
+ S('bg','Display','Background color','void',Object.keys(BGS)),
+ S('font','Display','Font family','system',Object.keys(FONTS)),
+ R('fsize','Display','Font size','13',11,18,1),
+ T('scan','Display','CRT scanlines',true),
+ R('scanint','Display','Scanline strength','18',0,60,2),
+ T('flicker','Display','Screen flicker',false),
+ T('glow','Display','Text glow',false),
+ T('mark','Display','Desktop watermark',true),
+ T('texture','Display','Desktop texture',true),
+ R('bright','Display','Brightness','100',60,130,5),
+ T('contrast','Display','High contrast',false),
+ T('gray','Display','Grayscale mode',false),
+ T('rounded','Display','Rounded corners',false),
+ T('shadows','Display','Window shadows',true),
+ T('compact','Display','Compact UI',false),
+ R('iconsz','Display','Icon width','84',60,120,4),
+ T('icons','Display','Show desktop icons',true),
+ X('host','System','Hostname','lagger','Shown in the terminal prompt'),
+ R('lag','System','Input lag (ms)','0',0,1000,50,'Terminal commands wait this long'),
+ T('bootanim','System','Boot animation',true),
+ S('bootspeed','System','Boot speed','normal',['slow','normal','fast']),
+ T('bootterm','System','Open terminal after boot',true),
+ T('h24','System','24-hour clock',true),
+ T('secs','System','Show seconds',true),
+ T('showclock','System','Show clock',true),
+ T('showuplink','System','Show uplink indicator',true),
+ T('showchip','System','Show profile chip',true),
+ T('toasts','System','Notifications',true),
+ R('toastms','System','Notification time (ms)','3200',1000,8000,200),
+ T('showbat','System','Show battery in taskbar',true),
+ T('batwarn','System','Low-battery warning (20%)',true),
+ T('confirmdel','System','Confirm file delete',true),
+ S('autosave','System','Notes autosave','off',['off','5s','15s','60s']),
+ T('paranoid','System','Wipe files when tab closes',false,'Paranoid mode'),
+ T('persist','System','Save data on this laptop',true,'Off = memory only, lost on reload'),
+ S('prompt','Terminal','Prompt style','classic',['classic','minimal','arrow','root']),
+ R('tfs','Terminal','Terminal font size','13',10,20,1),
+ S('tcolor','Terminal','Terminal text color','green',['green','amber','white','cyan']),
+ T('tbell','Terminal','Beep on terminal errors',false),
+ T('sound','Sound','Sound enabled',true),
+ R('vol','Sound','Volume','40',0,100,5),
+ T('keyclick','Sound','Key click sounds',false),
+ T('bootbeep','Sound','Boot beep',true),
+ T('dbl','Windows','Double-click title to maximize',true),
+ T('wanim','Windows','Window open animation',true),
+ T('ffm','Windows','Focus follows mouse',false),
+ T('single','Windows','One window per utility app',true),
+ S('tbpos','Windows','Taskbar position','bottom',['bottom','top']),
+ R('tbh','Windows','Taskbar height','34',28,48,2),
+ {id:'netlock',g:'Privacy',l:'Network kill-switch',d:true,t:'lock',h:'Cannot be disabled. That is the point.'},
+ {id:'telem',g:'Privacy',l:'Telemetry',d:false,t:'lock',h:'Does not exist.'}
+];
+const CFGDEF={};SET.forEach(s=>CFGDEF[s.id]=s.d);
+let CFG;try{CFG=Object.assign({},CFGDEF,JSON.parse(store.get(CKEY)||'{}'))}catch(e){CFG=Object.assign({},CFGDEF)}
+const saveCfg=()=>store.set(CKEY,JSON.stringify(CFG));
+function setCfg(id,v){CFG[id]=v;saveCfg();applyCfg()}
+function applyCfg(){
+  PERSIST=CFG.persist!==false;LAG=Number(CFG.lag)||0;
+  const a=ACCENTS[CFG.accent]||ACCENTS.amber,bg=BGS[CFG.bg]||BGS.void;
+  const tc={green:'#7dff9b',amber:a,white:'#f2efe6',cyan:'#4de1ff'}[CFG.tcolor]||'#7dff9b';
+  const bh=Number(CFG.tbh)||34,top=CFG.tbpos==='top',isz=Number(CFG.iconsz)||84;
+  const fl=[];const br=Number(CFG.bright);if(br!==100)fl.push(`brightness(${br}%)`);if(CFG.gray)fl.push('grayscale(1)');if(CFG.contrast)fl.push('contrast(1.3)');
+  let c=`:root{--amber:${a};--bg:${bg};--mono:${FONTS[CFG.font]||FONTS.system}}
+html,body{font-size:${Number(CFG.fsize)||13}px;background:${bg}}
+body{filter:${fl.join(' ')||'none'}}
+#scan{background:repeating-linear-gradient(0deg,rgba(0,0,0,${(Number(CFG.scanint)||0)/100}) 0 1px,transparent 1px 3px)}
+#bar{height:${bh}px;${top?'top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);':''}}
+#desk{inset:${top?bh+'px 0 0 0':'0 0 '+bh+'px 0'}}
+.toast{bottom:${top?16:bh+14}px;${top?'top:auto;':''}}
+.icon{width:${isz}px}.icons{grid-auto-columns:${isz}px}
+.term{color:${tc};font-size:${Number(CFG.tfs)||13}px}
+`;
+  if(!CFG.scan)c+='#scan{display:none}\n';
+  if(CFG.flicker)c+='@keyframes fl{0%,100%{opacity:1}45%{opacity:.96}50%{opacity:.88}55%{opacity:.97}}#desk{animation:fl 3.5s infinite}\n';
+  if(CFG.glow)c+=`body{text-shadow:0 0 5px ${a}66}\n`;
+  if(!CFG.mark)c+='#mark{display:none}\n';
+  if(!CFG.texture)c+='#desk{background:var(--bg)}\n';
+  if(CFG.rounded)c+='.win,.modal .box,.toast,.btn,.icon,#chip,.grid div,.ach div,.task,.tgl,.cg button,.mg button,.cgd button{border-radius:6px}\n';
+  if(!CFG.shadows)c+='.win,.win.focus,.modal .box,.toast{box-shadow:none}\n';
+  if(CFG.compact)c+='.tb{padding:2px 6px}.row{padding:2px 10px}.pad{padding:8px}.srow{padding:3px 10px}\n';
+  if(!CFG.icons)c+='.icons{display:none}\n';
+  if(CFG.wanim)c+='@keyframes wo{from{transform:scale(.96);opacity:0}}.win{animation:wo .14s steps(4)}\n';
+  if(!CFG.showclock)c+='#clock{display:none}\n';
+  if(!CFG.showuplink)c+='#net{display:none}\n';
+  if(!CFG.showchip)c+='#chip{display:none}\n';
+  if(!CFG.showbat)c+='#bat{display:none}\n';
+  let st=$('#cfgcss');if(!st){st=el('style');st.id='cfgcss';document.head.append(st)}
+  st.textContent=c;
+}
+/* ---------- sound ---------- */
+let AC=null;
+function beep(f=660,d=.06,type='square',vol=1){
+  if(!CFG.sound||!Number(CFG.vol))return;
+  try{
+    AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type=type;o.frequency.value=f;g.gain.value=(Number(CFG.vol)/100)*.25*vol;
+    o.connect(g);g.connect(AC.destination);o.start();
+    g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.stop(AC.currentTime+d+.02);
+  }catch(e){}
+}
+document.addEventListener('keydown',e=>{if(CFG.keyclick&&e.key&&e.key.length===1)beep(1100+Math.random()*250,.02,'square',.4)});
+addEventListener('pagehide',()=>{if(CFG.paranoid)store.del(KEY)});
+
+/* ---------- helpers for new apps ---------- */
+const onClose=(o,fn)=>{const pc=o.onclose;o.onclose=()=>{fn();pc&&pc()}};
+function kb(o,fn){
+  const h=e=>{if(focused!==o||!o.win.isConnected)return;if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;fn(e)};
+  document.addEventListener('keydown',h);onClose(o,()=>document.removeEventListener('keydown',h));
+}
+const accent=()=>ACCENTS[CFG.accent]||ACCENTS.amber;
+
+/* ---------- Settings app ---------- */
+function appSettings(){
+  const w=el('div','set');
+  w.innerHTML=`<div class="sh"><input class="sq" placeholder="search ${SET.length} settings…" spellcheck="false"><span class="dm sc"></span></div><div class="stabs"></div><div class="sl"></div><div class="sf"><button class="btn rs">reset all</button><button class="btn ex">export</button><button class="btn im">import</button></div>`;
+  const q=s=>$(s,w);
+  const groups=['All',...new Set(SET.map(s=>s.g))];let tab='All',query='';
+  const tabs=q('.stabs'),list=q('.sl');
+  groups.forEach(g=>{const b=el('button','btn',g);b.onclick=()=>{tab=g;draw()};tabs.append(b)});
+  q('.sq').addEventListener('input',e=>{query=e.target.value.toLowerCase();draw()});
+  function ctl(s){
+    const box=el('div','sc2');const v=CFG[s.id];
+    if(s.t==='tog'||s.t==='lock'){
+      const b=el('button','tgl'+(v?' on':''),v?'ON':'OFF');
+      if(s.t==='lock')b.disabled=true;else b.onclick=()=>{const nv=!CFG[s.id];setCfg(s.id,nv);b.classList.toggle('on',nv);b.textContent=nv?'ON':'OFF'};
+      box.append(b);
+    }else if(s.t==='sel'){
+      const sl=el('select');s.o.forEach(o=>{const op=el('option','',o);op.value=o;if(o===String(v))op.selected=true;sl.append(op)});
+      sl.onchange=()=>setCfg(s.id,sl.value);box.append(sl);
+    }else if(s.t==='rng'){
+      const r=el('input');r.type='range';r.min=s.min;r.max=s.max;r.step=s.step;r.value=v;
+      const lb=el('span','dm',String(v));lb.style.minWidth='34px';
+      r.oninput=()=>{lb.textContent=r.value;setCfg(s.id,r.value)};box.append(r,lb);
+    }else if(s.t==='txt'){
+      const i=el('input');i.type='text';i.value=v;i.maxLength=16;
+      i.onchange=()=>{const nv=i.value.trim().replace(/[^\w\-]/g,'').slice(0,16)||s.d;i.value=nv;setCfg(s.id,nv)};box.append(i);
+    }
+    return box;
+  }
+  function draw(){
+    [...tabs.children].forEach(b=>b.classList.toggle('on',b.textContent===tab));
+    list.innerHTML='';let n=0,last='';
+    SET.forEach(s=>{
+      if(tab!=='All'&&s.g!==tab)return;
+      if(query&&!(s.l+' '+s.g+' '+(s.h||'')).toLowerCase().includes(query))return;
+      if(s.g!==last&&tab==='All'){list.append(el('div','sgh',s.g.toUpperCase()));last=s.g}
+      const r=el('div','srow');const nm=el('div','sn');nm.append(document.createTextNode(s.l));
+      if(s.h)nm.append(el('small','',esc(s.h)));
+      r.append(nm,ctl(s));list.append(r);n++;
+    });
+    if(!n)list.innerHTML='<div class="pad dm">no settings match.</div>';
+    q('.sc').textContent=n+'/'+SET.length;
+  }
+  q('.rs').onclick=()=>modal('Reset ALL settings to defaults?',{ok:'reset'},()=>{CFG=Object.assign({},CFGDEF);saveCfg();applyCfg();draw();toast('settings reset')});
+  q('.ex').onclick=()=>{
+    try{const a=el('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(CFG,null,1)],{type:'application/json'}));a.download='laggeros-settings.json';document.body.append(a);a.click();a.remove();toast('settings exported')}
+    catch(e){toast('download blocked')}
+  };
+  q('.im').onclick=()=>ask('Paste settings JSON',' ',v=>{
+    try{const o=JSON.parse(v);if(!o||typeof o!=='object')throw 0;
+      SET.forEach(s=>{if(s.t==='lock'||!(s.id in o))return;
+        let x=o[s.id];
+        if(s.t==='tog')x=!!x;
+        else if(s.t==='sel'){if(!s.o.includes(String(x)))return;x=String(x)}
+        else if(s.t==='rng'){x=Math.min(s.max,Math.max(s.min,Number(x)));if(isNaN(x))return;x=String(x)}
+        else if(s.t==='txt')x=String(x).replace(/[^\w\-]/g,'').slice(0,16)||s.d;
+        CFG[s.id]=x});
+      saveCfg();applyCfg();draw();toast('settings imported');
+    }catch(e){toast('import failed: invalid JSON')}
+  });
+  draw();
+  return openWin('Settings',w,{w:520,h:480});
+}
+
+/* ---------- Calculator ---------- */
+function appCalc(){
+  const w=el('div','pad calc');
+  const hist=el('div','ch','&nbsp;'),disp=el('div','cd','0'),grid=el('div','cg');
+  w.append(hist,disp,grid);
+  let expr='';
+  const show=()=>{disp.textContent=expr||'0'};
+  const calc=()=>{
+    const s=expr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/%/g,'/100');
+    if(!/^[0-9+\-*/.() ]+$/.test(s))throw 0;
+    const r=Function('"use strict";return ('+s+')')();
+    if(typeof r!=='number'||!isFinite(r))throw 0;
+    return +r.toPrecision(12);
+  };
+  const isOp=c=>'+−×÷'.includes(c);
+  function press(k){
+    beep(900,.02,'square',.5);
+    if(k==='C'){expr='';hist.innerHTML='&nbsp;'}
+    else if(k==='⌫')expr=expr.slice(0,-1);
+    else if(k==='='){
+      if(!expr)return;
+      try{const r=calc();hist.textContent=expr+' =';expr=String(r);addXP(1)}catch(e){hist.textContent='error';expr=''}
+    }
+    else if(k==='±')expr=expr.startsWith('-')?expr.slice(1):(expr?'-'+expr:expr);
+    else if(isOp(k)){
+      if(!expr){if(k==='−')expr='-';return show()}
+      if(isOp(expr.slice(-1)))expr=expr.slice(0,-1);
+      expr+=k;
+    }
+    else if(k==='%'){if(expr&&!isOp(expr.slice(-1)))expr+='%'}
+    else expr+=k;
+    if(expr.length>30)expr=expr.slice(0,30);
+    show();
+  }
+  ['C','⌫','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','±','0','.','='].forEach(k=>{
+    const b=el('button',k==='='?'eq':'+−×÷'.includes(k)?'op':'',k);b.onclick=()=>press(k);grid.append(b);
+  });
+  const o=openWin('Calculator',w,{w:260,h:380});
+  const map={'*':'×','/':'÷','-':'−','Enter':'=','=':'=','Backspace':'⌫','Escape':'C','Delete':'C'};
+  kb(o,e=>{
+    const k=map[e.key]||e.key;
+    if(/^[0-9.+%]$/.test(k)||'×÷−=⌫C'.includes(k)&&k.length===1){e.preventDefault();press(k)}
+  });
+  return o;
+}
+
+/* ---------- Clock / Stopwatch / Timer ---------- */
+function appClock(){
+  const w=el('div','pad clk');
+  w.innerHTML=`<div class="ctabs"><button class="btn" data-t="c">clock</button><button class="btn" data-t="s">stopwatch</button><button class="btn" data-t="t">timer</button></div><div class="cv"></div>`;
+  const cv=$('.cv',w);let tab='c';
+  const sw={run:false,start:0,acc:0,laps:[]};
+  const tm={run:false,end:0,left:0,total:0};
+  const fmt=ms=>{const t=Math.floor(ms/10),cs=t%100,s=Math.floor(t/100)%60,m=Math.floor(t/6000);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+String(cs).padStart(2,'0')};
+  const fmtT=ms=>{const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s/60)%60;return (h?String(h).padStart(2,'0')+':':'')+String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+  const swNow=()=>sw.acc+(sw.run?Date.now()-sw.start:0);
+  const tmNow=()=>tm.run?Math.max(0,tm.end-Date.now()):tm.left;
+  function render(){
+    [...$('.ctabs',w).children].forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+    cv.innerHTML='';
+    if(tab==='c'){
+      cv.innerHTML=`<div class="big" id="ck1"></div><div class="dm" style="text-align:center" id="ck2"></div><div class="dm" style="text-align:center;margin-top:10px" id="ck3"></div>`;
+    }else if(tab==='s'){
+      cv.innerHTML=`<div class="big" id="sw1">00:00.00</div><div class="crow"><button class="btn" id="sgo"></button><button class="btn" id="slap">lap</button><button class="btn" id="srs">reset</button></div><div class="laps" id="slaps"></div>`;
+      const go=$('#sgo',w);
+      const sync=()=>{go.textContent=sw.run?'stop':'start'};sync();
+      go.onclick=()=>{if(sw.run){sw.acc+=Date.now()-sw.start;sw.run=false}else{sw.start=Date.now();sw.run=true}sync();beep(700,.03)};
+      $('#slap',w).onclick=()=>{if(swNow()>0){sw.laps.unshift(fmt(swNow()));drawLaps()}};
+      $('#srs',w).onclick=()=>{sw.run=false;sw.acc=0;sw.laps=[];sync();drawLaps()};
+      drawLaps();
+    }else{
+      cv.innerHTML=`<div class="big" id="tm1"></div><div class="crow"><input id="tmin" type="number" min="0" max="999" value="5"> min <input id="tsec" type="number" min="0" max="59" value="0"> sec</div><div class="crow"><button class="btn" id="tgo"></button><button class="btn" id="trs">reset</button></div>`;
+      const go=$('#tgo',w);
+      const sync=()=>{go.textContent=tm.run?'pause':'start'};sync();
+      go.onclick=()=>{
+        if(tm.run){tm.left=tm.end-Date.now();tm.run=false}
+        else{
+          if(tm.left<=0){const t=(Math.max(0,+$('#tmin',w).value||0)*60+Math.min(59,Math.max(0,+$('#tsec',w).value||0)))*1000;if(!t)return;tm.total=t;tm.left=t}
+          tm.end=Date.now()+tm.left;tm.run=true;
+        }
+        sync();beep(700,.03);
+      };
+      $('#trs',w).onclick=()=>{tm.run=false;tm.left=0;sync()};
+    }
+    tick();
+  }
+  function drawLaps(){const l=$('#slaps',w);if(l)l.innerHTML=sw.laps.map((x,i)=>`${String(sw.laps.length-i).padStart(2,'0')}  ${x}`).join('<br>')}
+  function tick(){
+    if(tab==='c'){
+      const d=new Date(),a=$('#ck1',w);if(!a)return;
+      a.textContent=d.toLocaleTimeString([],{hour12:!CFG.h24,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      $('#ck2',w).textContent=d.toLocaleDateString([],{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      $('#ck3',w).textContent='UTC '+d.toISOString().slice(11,19)+'  ·  offline for '+Math.floor((Date.now()-bootTime)/1000)+'s  ·  no NTP, trusting the local clock';
+    }else if(tab==='s'){const e=$('#sw1',w);if(e)e.textContent=fmt(swNow())}
+    else{
+      const e=$('#tm1',w);if(!e)return;
+      const l=tmNow();e.textContent=fmtT(tm.run||tm.left>0?l:0);
+      if(tm.run&&l<=0){
+        tm.run=false;tm.left=0;toast('timer finished');
+        [0,200,400].forEach(t=>setTimeout(()=>beep(880,.15,'square',1.5),t));
+        const g=$('#tgo',w);if(g)g.textContent='start';
+      }
+    }
+  }
+  $('.ctabs',w).onclick=e=>{const t=e.target.dataset&&e.target.dataset.t;if(t){tab=t;render()}};
+  render();
+  const iv=setInterval(tick,50);
+  const o=openWin('Clock',w,{w:400,h:300});onClose(o,()=>clearInterval(iv));return o;
+}
+
+/* ---------- Snake ---------- */
+function appSnake(){
+  const N=20,SZ=16,HK='laggeros.snake.hi';
+  const w=el('div','pad gwrap');
+  const info=el('div','dm');const cv=el('canvas');cv.width=cv.height=N*SZ;
+  w.append(info,cv,el('div','dm','arrows / WASD to steer · space pause · enter restart'));
+  const g=cv.getContext('2d');
+  let snake,dir,nd,food,score,alive,paused,timer,hi=Number(store.get(HK))||0;
+  const place=()=>{let p;do{p={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(snake.some(s=>s.x===p.x&&s.y===p.y));food=p};
+  const hud=()=>{info.textContent=`score ${score}   best ${hi}   ${!alive?'GAME OVER':paused?'PAUSED':''}`};
+  function draw(){
+    g.fillStyle='#050607';g.fillRect(0,0,N*SZ,N*SZ);
+    g.fillStyle='#ff4d3d';g.fillRect(food.x*SZ+2,food.y*SZ+2,SZ-4,SZ-4);
+    snake.forEach((s,i)=>{g.fillStyle=i?accent():'#fff';g.globalAlpha=i?Math.max(.4,1-i*.02):1;g.fillRect(s.x*SZ+1,s.y*SZ+1,SZ-2,SZ-2)});
+    g.globalAlpha=1;hud();
+  }
+  function reset(){snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dir=nd={x:1,y:0};score=0;alive=true;paused=false;place();draw();loop()}
+  function loop(){
+    clearTimeout(timer);
+    timer=setTimeout(()=>{step();if(alive)loop()},Math.max(55,125-score*3));
+  }
+  function step(){
+    if(paused||!alive)return;
+    dir=nd;const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+    if(h.x<0||h.y<0||h.x>=N||h.y>=N||snake.some(s=>s.x===h.x&&s.y===h.y)){
+      alive=false;beep(120,.3,'sawtooth');
+      if(score>hi){hi=score;store.set(HK,String(hi));toast('new snake record: '+hi)}
+      draw();return;
+    }
+    snake.unshift(h);
+    if(h.x===food.x&&h.y===food.y){score++;addXP(1);beep(900,.05);place()}else snake.pop();
+    draw();
+  }
+  reset();
+  const o=openWin('Snake',w,{w:370,h:430});
+  onClose(o,()=>clearTimeout(timer));
+  kb(o,e=>{
+    const m={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]}[e.key];
+    if(m){e.preventDefault();if(m[0]!==-dir.x||m[1]!==-dir.y)nd={x:m[0],y:m[1]}}
+    else if(e.key===' '){e.preventDefault();if(alive){paused=!paused;draw()}}
+    else if(e.key==='Enter'){reset()}
+  });
+  return o;
+}
+
+/* ---------- Minesweeper ---------- */
+function appMines(){
+  const ROWS=9,COLS=9,MINES=10;
+  const w=el('div','pad');
+  const hd=el('div','mh'),left=el('span'),fl=el('button','btn','flag: off'),face=el('button','btn','☺'),tmr=el('span');
+  hd.append(left,fl,face,tmr);
+  const gr=el('div','mg');gr.style.gridTemplateColumns=`repeat(${COLS},28px)`;
+  w.append(hd,gr,el('div','dm','right-click or "flag" mode to plant flags'));
+  let cells,over,started,t0,flagMode=false,iv,flags,opened;
+  const nb=i=>{const r=Math.floor(i/COLS),c=i%COLS,o=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const rr=r+dr,cc=c+dc;if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS)o.push(rr*COLS+cc)}return o};
+  function init(){
+    cells=Array.from({length:ROWS*COLS},()=>({m:0,o:0,f:0,n:0}));
+    over=false;started=false;flags=0;opened=0;clearInterval(iv);tmr.textContent='000';face.textContent='☺';render();
+  }
+  const plant=safe=>{
+    let p=0;while(p<MINES){const i=Math.floor(Math.random()*ROWS*COLS);if(i===safe||cells[i].m)continue;cells[i].m=1;p++}
+    cells.forEach((c,i)=>c.n=nb(i).filter(j=>cells[j].m).length);
+  };
+  const reveal=i=>{
+    const st=[i];
+    while(st.length){const k=st.pop(),c=cells[k];if(c.o||c.f)continue;c.o=1;opened++;if(!c.n&&!c.m)nb(k).forEach(j=>st.push(j))}
+  };
+  function act(i,right){
+    if(over)return;const c=cells[i];
+    if(right||flagMode){if(!c.o){c.f=c.f?0:1;flags+=c.f?1:-1;beep(500,.02)}}
+    else{
+      if(c.f||c.o)return;
+      if(!started){started=true;plant(i);t0=Date.now();iv=setInterval(()=>{tmr.textContent=String(Math.min(999,Math.floor((Date.now()-t0)/1000))).padStart(3,'0')},500)}
+      if(c.m){over=true;clearInterval(iv);face.textContent='☹';cells.forEach(x=>{if(x.m)x.o=1});beep(110,.35,'sawtooth')}
+      else{
+        reveal(i);beep(800,.02);
+        if(opened===ROWS*COLS-MINES){over=true;clearInterval(iv);face.textContent='★';addXP(15);toast('minefield cleared');beep(880,.12)}
+      }
+    }
+    render();
+  }
+  function render(){
+    left.textContent='mines '+String(MINES-flags).padStart(2,'0');gr.innerHTML='';
+    cells.forEach((c,i)=>{
+      const b=el('button');
+      if(c.o){b.className='o';if(c.m){b.className='m';b.textContent='✹'}else if(c.n){b.textContent=c.n;b.classList.add('n'+c.n)}}
+      else if(c.f){b.className='f';b.textContent='⚑'}
+      b.onclick=()=>act(i,false);b.oncontextmenu=e=>{e.preventDefault();act(i,true)};
+      gr.append(b);
+    });
+  }
+  fl.onclick=()=>{flagMode=!flagMode;fl.textContent='flag: '+(flagMode?'on':'off');fl.style.color=flagMode?'var(--amber)':''};
+  face.onclick=init;init();
+  const o=openWin('Minesweeper',w,{w:330,h:420});onClose(o,()=>clearInterval(iv));return o;
+}
+
+/* ---------- Paint ---------- */
+function appPaint(){
+  const w=el('div','paint');
+  const bar=el('div','pt2'),cvw=el('div','cvw'),cv=el('canvas');cv.width=420;cv.height=300;
+  cvw.append(cv);w.append(bar,cvw);
+  const g=cv.getContext('2d');g.fillStyle='#050607';g.fillRect(0,0,420,300);g.lineCap='round';g.lineJoin='round';
+  let color='#ffb000',eraser=false,size=4,down=false,lx=0,ly=0;
+  const cols=['#ffb000','#ff4d3d','#7dff9b','#4de1ff','#ff5fd2','#f2efe6','#8a5cff','#ff8a1f'];
+  const sws=cols.map(c=>{const b=el('button','sw');b.style.background=c;b.onclick=()=>{color=c;eraser=false;sync()};bar.append(b);return b});
+  const er=el('button','btn','eraser'),sz=el('input'),clr=el('button','btn','clear'),dl=el('button','btn','download'),sv=el('button','btn','save to files');
+  sz.type='range';sz.min=1;sz.max=40;sz.value=size;sz.style.width='80px';sz.style.accentColor='var(--amber)';
+  sz.oninput=()=>size=+sz.value;
+  bar.append(er,sz,clr,dl,sv);
+  function sync(){sws.forEach((b,i)=>b.classList.toggle('sel',!eraser&&cols[i]===color));er.style.color=eraser?'var(--amber)':'';er.style.borderColor=eraser?'var(--amber)':''}
+  er.onclick=()=>{eraser=!eraser;sync()};sync();
+  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+  cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);[lx,ly]=pos(e);g.fillStyle=eraser?'#050607':color;g.beginPath();g.arc(lx,ly,size/2,0,7);g.fill()});
+  cv.addEventListener('pointermove',e=>{
+    if(!down)return;const[x,y]=pos(e);
+    g.strokeStyle=eraser?'#050607':color;g.lineWidth=size;g.beginPath();g.moveTo(lx,ly);g.lineTo(x,y);g.stroke();lx=x;ly=y;
+  });
+  const up=()=>down=false;cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  clr.onclick=()=>modal('Clear the canvas?',{ok:'clear'},()=>{g.fillStyle='#050607';g.fillRect(0,0,420,300)});
+  dl.onclick=()=>{try{const a=el('a');a.href=cv.toDataURL('image/png');a.download='lagger-drawing.png';document.body.append(a);a.click();a.remove();toast('png downloaded')}catch(e){toast('download blocked')}};
+  sv.onclick=()=>ask('Save as (inside /home/lagger/pics)','drawing-'+Date.now().toString(36)+'.png',v=>{
+    const name=(v||'').trim().replace(/[^\w.\-]/g,'');if(!name)return;
+    const home=node('/home/lagger');if(!home.c.pics)home.c.pics={t:'d',c:{}};
+    const before=countNodes();home.c.pics.c[name]={t:'f',d:cv.toDataURL('image/png')};save();creditFiles(before);addXP(3);toast('saved pics/'+name);
+  });
+  return openWin('Paint',w,{w:520,h:430});
+}
+
+/* ---------- Synth ---------- */
+function appSynth(){
+  const w=el('div','pad');
+  const WH=[['a','C',60],['s','D',62],['d','E',64],['f','F',65],['g','G',67],['h','A',69],['j','B',71],['k','C',72]];
+  const BL=[['w',61,1],['e',63,2],['t',66,4],['y',68,5],['u',70,6]];
+  const top=el('div','crow');
+  const wv=el('select');['sine','square','sawtooth','triangle'].forEach(t=>{const o=el('option','',t);o.value=t;wv.append(o)});
+  const demo=el('button','btn','▶ demo');top.append(el('span','dm','wave'),wv,demo);
+  const keys=el('div','keys');w.append(top,keys,el('div','dm','play with the mouse or keys a s d f g h j k  (w e t y u = sharps)'));
+  const f=m=>440*Math.pow(2,(m-69)/12),btn={};
+  const play=m=>{beep(f(m),.55,wv.value,2.2);const b=btn[m];if(b){b.classList.add('dn');setTimeout(()=>b.classList.remove('dn'),140)}};
+  WH.forEach(([k,n,m])=>{const b=el('button','wk',`${n}<br>${k}`);b.onmousedown=()=>play(m);keys.append(b);btn[m]=b});
+  BL.forEach(([k,m,pos])=>{const b=el('button','bk2',k);b.style.left=(pos*42-13)+'px';b.onmousedown=()=>play(m);keys.append(b);btn[m]=b});
+  const o=openWin('Synth',w,{w:410,h:290});
+  const km={};WH.forEach(([k,n,m])=>km[k]=m);BL.forEach(([k,m])=>km[k]=m);
+  kb(o,e=>{if(e.repeat||e.metaKey||e.ctrlKey)return;const m=km[e.key.toLowerCase()];if(m)play(m)});
+  let dt=[];
+  demo.onclick=()=>{
+    if(!CFG.sound)toast('sound is off in Settings');
+    dt.forEach(clearTimeout);
+    dt=[64,64,65,67,67,65,64,62,60,60,62,64,64,62,62].map((m,i)=>setTimeout(()=>play(m),i*260));
+  };
+  onClose(o,()=>dt.forEach(clearTimeout));
+  return o;
+}
+
+/* ---------- Calendar ---------- */
+function appCal(){
+  const CK='laggeros.cal.v1';
+  let notes={};try{notes=JSON.parse(store.get(CK)||'{}')}catch(e){}
+  const now=new Date();let y=now.getFullYear(),m=now.getMonth();
+  const w=el('div','pad cal');
+  const hd=el('div','ch2'),prev=el('button','btn','◀'),ttl=el('span','am'),next=el('button','btn','▶'),tdy=el('button','btn','today');
+  hd.append(prev,ttl,tdy,next);
+  const grid=el('div','cgd'),list=el('div','dm');list.style.marginTop='10px';
+  w.append(hd,grid,list);
+  const key=(d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  function draw(){
+    ttl.textContent=new Date(y,m,1).toLocaleDateString([],{month:'long',year:'numeric'});
+    grid.innerHTML='';
+    ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d=>grid.append(el('div','dh',d)));
+    const off=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate();
+    for(let i=0;i<off;i++)grid.append(el('span'));
+    for(let d=1;d<=days;d++){
+      const b=el('button','',String(d)),k=key(d);
+      if(y===now.getFullYear()&&m===now.getMonth()&&d===now.getDate())b.classList.add('td');
+      if(notes[k])b.classList.add('hn');
+      b.onclick=()=>ask('Note for '+k+' (empty = delete)',notes[k]||'',v=>{
+        v=(v||'').trim().slice(0,120);
+        if(v){if(!notes[k])addXP(2);notes[k]=v}else delete notes[k];
+        store.set(CK,JSON.stringify(notes));draw();
+      });
+      grid.append(b);
+    }
+    const pre=`${y}-${String(m+1).padStart(2,'0')}-`;
+    const ks=Object.keys(notes).filter(k=>k.startsWith(pre)).sort();
+    list.innerHTML=ks.length?ks.map(k=>`<span class="am">${k.slice(8)}</span>  ${esc(notes[k])}`).join('<br>'):'no notes this month. click a day.';
+  }
+  prev.onclick=()=>{m--;if(m<0){m=11;y--}draw()};
+  next.onclick=()=>{m++;if(m>11){m=0;y++}draw()};
+  tdy.onclick=()=>{y=now.getFullYear();m=now.getMonth();draw()};
+  draw();
+  return openWin('Calendar',w,{w:380,h:430});
+}
+
+/* ---------- Task Manager ---------- */
+function appTasks(){
+  const w=el('div','pad tm');
+  const BASE=[['kernel',1,2,18],['lagsh',12,1,9],['fsd',20,0,6],['clockd',21,0,2],['voidwatch',33,3,14],['netd',40,0,0,'disabled'],['telemetryd',0,0,0,'not found']];
+  let procs=BASE.map(p=>p.slice());
+  const wt=el('div'),pt=el('div');w.append(el('h4','','WINDOWS'),wt,el('h4','','PROCESSES'),pt,el('div','dm','uptime and load are simulated; windows are real.'));
+  function draw(){
+    wt.innerHTML='';
+    const t=el('table');t.innerHTML='<tr><th>window</th><th></th><th></th></tr>';
+    wins.forEach(o=>{
+      const r=el('tr');r.innerHTML=`<td>${esc(o.title)}</td><td></td><td></td>`;
+      const f=el('button','btn','focus'),c=el('button','btn','close');
+      f.onclick=()=>{o.win.style.display='';o.focus()};
+      c.onclick=()=>{o.win.querySelector('.cl').click();draw()};
+      r.children[1].append(f);r.children[2].append(c);t.append(r);
+    });
+    wt.innerHTML='';wt.append(t);
+    const p=el('table');p.innerHTML='<tr><th>pid</th><th>name</th><th>cpu</th><th>mem</th><th></th></tr>';
+    procs.forEach((x,i)=>{
+      const live=!x[4];
+      const cpu=live?Math.max(0,x[2]+Math.round((Math.random()-.4)*3)):0;
+      const r=el('tr');r.innerHTML=`<td class="dm">${x[1]||'—'}</td><td>${esc(x[0])}${x[4]?` <span class="red">(${x[4]})</span>`:''}</td><td>${cpu}%</td><td>${live?x[3]+' MB':'—'}</td><td></td>`;
+      if(live){
+        const k=el('button','btn','kill');
+        k.onclick=()=>{
+          if(x[0]==='kernel'){modal('Nice try. The kernel is all that is left.',{ok:'ok',cancel:false});return}
+          procs.splice(i,1);toast('killed '+x[0]);draw();
+        };
+        r.lastChild.append(k);
+      }
+      p.append(r);
+    });
+    if(procs.length<BASE.length){const b=el('button','btn','respawn all');b.onclick=()=>{procs=BASE.map(q=>q.slice());draw()};pt.innerHTML='';pt.append(p,b)}
+    else{pt.innerHTML='';pt.append(p)}
+  }
+  draw();const iv=setInterval(draw,1500);
+  const o=openWin('Task Manager',w,{w:430,h:420});onClose(o,()=>clearInterval(iv));return o;
+}
+
+/* ---------- Offline Browser ---------- */
+function appBrowser(){
+  const w=el('div','brw');
+  w.innerHTML=`<div class="ab"><button class="btn bk">◀</button><button class="btn hm">⌂</button><input spellcheck="false" placeholder="lager://home"></div><div class="pg"></div>`;
+  const inp=$('input',w),pg=$('.pg',w);let hist=[],hi=-1;
+  const pages={
+    home:()=>`<div class="am" style="font-size:20px">LaggerNet</div><br>The only network here is the one inside this machine.<br><br>
+      <a data-go="lager://files">lager://files</a> — browse your files<br><a data-go="lager://about">lager://about</a> — what this is<br><a data-go="lager://nothing">lager://nothing</a> — a page about nothing<br><br>
+      <span class="dm">anything that starts with http:// goes nowhere.</span>`,
+    about:()=>`<div class="am" style="font-size:18px">About</div><br>LaggerOS has no network stack. This browser renders local pages only.`,
+    nothing:()=>`<div class="dm">( this page intentionally left blank )</div>`,
+    files:()=>{const rows=[];const walk=(n,p)=>Object.keys(n.c).sort().forEach(k=>{const c=n.c[k],q=p+'/'+k;rows.push(c.t==='d'?`<span class="dm">${esc(q)}/</span>`:`<a data-go="lager://file${esc(q)}">${esc(q)}</a>`);if(c.t==='d')walk(c,q)});walk(FS,'');return `<div class="am">lager://files</div><br>`+rows.join('<br>')}
+  };
+  function view(u){
+    u=u.trim();
+    if(/^https?:\/\//i.test(u)||/^[\w-]+\.[a-z]{2,}/i.test(u)){
+      P.netfails++;addXP(1);
+      return `<div class="red" style="font-size:18px">This site can't be reached</div><br><span class="dm">${esc(u)}</span> could not be found.<br>ERR_INTERNET_DISCONNECTED<br><br>There is no internet. There never was, here.<br><br><a data-go="lager://home">back to LaggerNet</a>`;
+    }
+    const m=u.replace(/^lager:\/\//,'');
+    if(m.startsWith('file/')){const n=node('/'+m.slice(5));return n&&n.t==='f'?`<div class="am">/${esc(m.slice(5))}</div><br><pre style="white-space:pre-wrap;font:inherit">${esc(n.d.startsWith('data:')?'(binary file)':n.d)}</pre>`:`<div class="red">404 — no such file</div>`}
+    return pages[m||'home']?pages[m||'home']():`<div class="red" style="font-size:18px">404</div><br>lager://${esc(m)} does not exist.`;
+  }
+  function go(u,push=true){
+    if(!u)return;if(!/^[a-z]+:\/\//i.test(u)&&!/^[\w-]+\.[a-z]{2,}/i.test(u))u='lager://'+u;
+    if(push){hist=hist.slice(0,hi+1);hist.push(u);hi=hist.length-1}
+    inp.value=u;pg.innerHTML=view(u);
+  }
+  pg.onclick=e=>{const a=e.target.closest('[data-go]');if(a)go(a.dataset.go)};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go(inp.value)});
+  $('.bk',w).onclick=()=>{if(hi>0){hi--;go(hist[hi],false)}};
+  $('.hm',w).onclick=()=>go('lager://home');
+  go('lager://home');
+  return openWin('Browser',w,{w:520,h:380});
+}
+
+/* ---------- Music: engine ---------- */
+const MUSDB='laggeros-music';
+const musDB=()=>new Promise((res,rej)=>{const r=indexedDB.open(MUSDB,1);r.onupgradeneeded=()=>r.result.createObjectStore('songs',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function dbAll(){let d;try{d=await musDB();return await new Promise(res=>{const q=d.transaction('songs').objectStore('songs').getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])})}catch(e){return[]}finally{d&&d.close()}}
+async function dbPut(rec){let d;try{d=await musDB();await new Promise((res,rej)=>{const t=d.transaction('songs','readwrite');t.objectStore('songs').put(rec);t.oncomplete=res;t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)});return true}catch(e){return false}finally{d&&d.close()}}
+async function dbDel(id){let d;try{d=await musDB();await new Promise(res=>{const t=d.transaction('songs','readwrite');t.objectStore('songs').delete(id);t.oncomplete=res;t.onerror=res})}catch(e){}finally{d&&d.close()}}
+
+const BUILTIN=[
+ {id:'b1',name:'Neon Static',tag:'house · 128 bpm',gen:true,bpm:128,style:'house',prog:[[57,'m'],[53,'M'],[48,'M'],[55,'M']]},
+ {id:'b2',name:'Glitch Garden',tag:'half-time bass · 140 bpm',gen:true,bpm:140,style:'dub',prog:[[53,'m'],[49,'M'],[56,'M'],[51,'M']]},
+ {id:'b3',name:'Void Drive',tag:'drum & bass · 174 bpm',gen:true,bpm:174,style:'dnb',prog:[[48,'m'],[44,'M'],[51,'M'],[46,'M']]},
+ {id:'b4',name:'Midnight Offline',tag:'chill · 84 bpm',gen:true,bpm:84,style:'chill',prog:[[50,'m'],[46,'M'],[53,'M'],[48,'M']]},
+ {id:'b5',name:'Lagger Anthem',tag:'uplifting · 124 bpm',gen:true,bpm:124,style:'anthem',prog:[[48,'M'],[55,'M'],[57,'m'],[53,'M']]}
+];
+const MUS={list:BUILTIN.slice(),idx:-1,playing:false,shuffle:false,vol:Number(store.get('laggeros.music.vol')||70),stopFn:null,t0:0,subs:new Set(),loaded:false};
+let MA=null,OUT=null;
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+const bn=(r,o)=>{let n=r-12*o;while(n<36)n+=12;return n};
+const musEmit=()=>{MUS.subs.forEach(f=>f());updateMusBtn()};
+function updateMusBtn(){const b=$('#mbtn');if(b){b.classList.toggle('pl',MUS.playing);b.title=MUS.playing?'Music — now playing: '+(MUS.list[MUS.idx]||{}).name:'Music'}}
+function musInit(){
+  if(MA)return MA;
+  AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+  const gain=AC.createGain(),comp=AC.createDynamicsCompressor(),an=AC.createAnalyser();
+  an.fftSize=128;an.smoothingTimeConstant=.78;
+  gain.connect(comp);comp.connect(an);an.connect(AC.destination);
+  MA={gain,an,el:null,url:null,nb:null};setMusVol();return MA;
+}
+function setMusVol(){if(MA)MA.gain.gain.value=MUS.vol/100*.85;store.set('laggeros.music.vol',String(MUS.vol))}
+async function musLoad(){
+  if(MUS.loaded)return;MUS.loaded=true;
+  const recs=await dbAll();
+  recs.forEach(r=>{if(r&&r.blob&&!MUS.list.some(t=>t.id===r.id))MUS.list.push({id:r.id,name:r.name,tag:'your file',file:true,blob:r.blob})});
+  musEmit();
+}
+/* instruments */
+function noiseBuf(){if(!MA.nb){const b=AC.createBuffer(1,AC.sampleRate,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;MA.nb=b}return MA.nb}
+function kick(t,v=1){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);g.gain.setValueAtTime(v*.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(OUT);o.start(t);o.stop(t+.32)}
+function noiseHit(t,{dur=.1,hp=5000,v=.3,type='highpass'}={}){const s=AC.createBufferSource();s.buffer=noiseBuf();const f=AC.createBiquadFilter();f.type=type;f.frequency.value=hp;const g=AC.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(OUT);s.start(t);s.stop(t+dur+.02)}
+function tone(t,freq,dur,{type='sawtooth',v=.2,lp=2000,a=.005,detune=0,sweep=0}={}){
+  const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
+  o.type=type;o.frequency.value=freq;o.detune.value=detune;f.type='lowpass';f.frequency.setValueAtTime(lp,t);
+  if(sweep)f.frequency.exponentialRampToValueAtTime(Math.max(120,lp*sweep),t+dur);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(f);f.connect(g);g.connect(OUT);o.start(t);o.stop(t+dur+.03);
+}
+const chordOf=(tr,bar)=>{const[root,q]=tr.prog[bar%tr.prog.length];return{root,tri:[root,root+(q==='m'?3:4),root+7]}};
+const STYLES={
+  house(s,bar,t,spb,tr){const{root,tri}=chordOf(tr,bar);
+    if(s%4===0)kick(t);
+    if(s===4||s===12)noiseHit(t,{dur:.14,hp:1800,v:.22,type:'bandpass'});
+    if(s%4===2)noiseHit(t,{dur:.07,hp:7000,v:.12});else if(s%2===1)noiseHit(t,{dur:.03,hp:9000,v:.04});
+    if(s%4===2)tone(t,mtof(bn(root,1)),spb*3,{lp:700,v:.25,sweep:.4});
+    if(s%2===0)tone(t,mtof(tri[[0,1,2,1][(s/2)%4]]+12),spb*1.6,{type:'square',v:.05,lp:3200});
+    if(s===0)tri.forEach((n,i)=>tone(t,mtof(n+12),spb*16,{v:.025,lp:900,a:.3,detune:(i-1)*8}));
+  },
+  dub(s,bar,t,spb,tr){const{root,tri}=chordOf(tr,bar);
+    if(s===0||s===10)kick(t,1.1);
+    if(s===8){noiseHit(t,{dur:.2,hp:1500,v:.3,type:'bandpass'});tone(t,190,.12,{type:'triangle',v:.2,lp:2000})}
+    if(s%2===0)noiseHit(t,{dur:.04,hp:8000,v:.06});
+    if(s===0||s===3||s===6||s===12)tone(t,mtof(bn(root,2)+(s===6?7:0)+(s===12?5:0)),spb*(s===0?3:2),{v:.3,lp:900,sweep:.15});
+    if(s===0)tone(t,mtof(bn(root,2)),spb*7,{type:'sine',v:.35});
+    if(s===4||s===7||s===14)tone(t,mtof(tri[(s+bar)%3]+12),spb*2,{type:'triangle',v:.12,lp:3000});
+  },
+  dnb(s,bar,t,spb,tr){const{root,tri}=chordOf(tr,bar);
+    if(s===0||s===10)kick(t,1.1);
+    if(s===4||s===12){noiseHit(t,{dur:.16,hp:1600,v:.3,type:'bandpass'});tone(t,200,.08,{type:'triangle',v:.2})}
+    if(s%2===0)noiseHit(t,{dur:.03,hp:9000,v:.07});else if(s===7||s===15)noiseHit(t,{dur:.03,hp:9000,v:.05});
+    if(s===0||s===6||s===10||s===13){tone(t,mtof(bn(root,2)+(s===10?3:0)),spb*(s===0?5:2.5),{type:'sine',v:.35});tone(t,mtof(bn(root,1)),spb*2,{v:.1,lp:500})}
+    if(s===0)tri.forEach((n,i)=>tone(t,mtof(n+12),spb*16,{v:.025,lp:1100,a:.2,detune:(i-1)*10}));
+    if(s%4===2&&bar%2===1)tone(t,mtof(tri[Math.floor(s/2)%3]+24),spb*1.2,{type:'square',v:.04,lp:4000});
+  },
+  chill(s,bar,t,spb,tr){const{root,tri}=chordOf(tr,bar);
+    if(s===0||s===7||s===10)kick(t,.7);
+    if(s===4||s===12)noiseHit(t,{dur:.12,hp:900,v:.14,type:'bandpass'});
+    if(s%2===0)noiseHit(t,{dur:.04,hp:6000,v:.05});
+    if(s===0){[...tri,root+10].forEach((n,i)=>tone(t,mtof(n+12),spb*16,{type:'triangle',v:.06,lp:1400,a:.15,detune:(i-1)*6}));tone(t,mtof(bn(root,1)),spb*8,{type:'sine',v:.3})}
+    if(s===8)tone(t,mtof(bn(root,1)+7),spb*6,{type:'sine',v:.22});
+    if((s===2||s===6||s===11)&&Math.random()<.65){const pent=[0,3,5,7,10];tone(t,mtof(root+24+pent[Math.floor(Math.random()*5)]),spb*4,{type:'sine',v:.1,lp:2500})}
+  },
+  anthem(s,bar,t,spb,tr){const{root,tri}=chordOf(tr,bar);
+    if(s%4===0)kick(t);
+    if(s===4||s===12)noiseHit(t,{dur:.14,hp:1800,v:.24,type:'bandpass'});
+    if(s%4===2)noiseHit(t,{dur:.08,hp:7500,v:.12});
+    if(s%2===0)tone(t,mtof(bn(root,1)),spb*1.6,{v:.2,lp:650,sweep:.5});
+    if(s===0||s===3||s===6||s===10)tri.forEach((n,i)=>tone(t,mtof(n+12),spb*1.5,{v:.045,lp:2800,detune:(i-1)*9}));
+    if(bar%4>=2&&s%2===0)tone(t,mtof(tri[[0,1,2,1,2,1,0,1][(s/2)%8]]+24),spb*1.2,{type:'square',v:.045,lp:4500});
+  }
+};
+function startGen(tr){
+  const spb=60/tr.bpm/4;let step=0,bar=0,next=AC.currentTime+.08;
+  const id=setInterval(()=>{
+    while(next<AC.currentTime+.25){STYLES[tr.style](step,bar,next,spb,tr);step++;if(step===16){step=0;bar++}next+=spb}
+  },40);
+  return()=>clearInterval(id);
+}
+function musHalt(){
+  if(MUS.stopFn){try{MUS.stopFn()}catch(e){}MUS.stopFn=null}
+  MUS.playing=false;
+}
+async function musPlay(i){
+  if(!CFG.sound){toast('sound is off — turn it on in Settings');return}
+  const tr=MUS.list[i];if(!tr)return;
+  musInit();if(AC.state==='suspended'){try{await AC.resume()}catch(e){}}
+  musHalt();MUS.idx=i;MUS.t0=Date.now();
+  if(tr.gen){
+    const out=AC.createGain();out.connect(MA.gain);OUT=out;
+    const stopSeq=startGen(tr);
+    MUS.stopFn=()=>{stopSeq();out.gain.setTargetAtTime(0,AC.currentTime,.05);setTimeout(()=>{try{out.disconnect()}catch(e){}},700)};
+    MUS.playing=true;
+  }else{
+    if(!MA.el){
+      MA.el=new Audio();MA.src=AC.createMediaElementSource(MA.el);MA.src.connect(MA.gain);
+      MA.el.addEventListener('ended',()=>musNext(true));
+    }
+    if(MA.url)URL.revokeObjectURL(MA.url);
+    MA.url=URL.createObjectURL(tr.blob);MA.el.src=MA.url;
+    try{await MA.el.play();MUS.playing=true;MUS.stopFn=()=>MA.el.pause()}
+    catch(e){toast('could not play "'+tr.name+'"');MUS.playing=false}
+  }
+  musEmit();
+}
+function musToggle(){
+  if(MUS.playing){
+    const tr=MUS.list[MUS.idx];
+    if(tr&&tr.file&&MA&&MA.el){MA.el.pause();MUS.stopFn=null;MUS.playing=false}else musHalt();
+    return musEmit();
+  }
+  if(MUS.idx<0)return musPlay(0);
+  const tr=MUS.list[MUS.idx];
+  if(tr&&tr.file&&MA&&MA.el&&MA.el.src&&MA.el.currentTime>0&&!MA.el.ended){
+    if(!CFG.sound){toast('sound is off — turn it on in Settings');return}
+    AC.resume&&AC.resume();
+    MA.el.play().then(()=>{MUS.playing=true;MUS.stopFn=()=>MA.el.pause();musEmit()}).catch(()=>musPlay(MUS.idx));
+  }else musPlay(MUS.idx);
+}
+function musNext(auto){
+  const n=MUS.list.length;if(!n)return;
+  let i;if(MUS.shuffle&&n>1){do{i=Math.floor(Math.random()*n)}while(i===MUS.idx)}else i=(MUS.idx+1)%n;
+  musPlay(i);
+}
+function musPrev(){
+  const tr=MUS.list[MUS.idx];
+  if(tr&&tr.file&&MA&&MA.el&&MA.el.currentTime>3){MA.el.currentTime=0;return}
+  musPlay((MUS.idx-1+MUS.list.length)%MUS.list.length);
+}
+async function musAdd(files){
+  await musLoad();let added=0,memOnly=false;
+  for(const f of files){
+    if(!/^audio\//.test(f.type)&&!/\.(mp3|wav|ogg|m4a|aac|flac|opus|webm)$/i.test(f.name))continue;
+    const rec={id:'f'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:f.name.replace(/\.[^.]+$/,'').slice(0,60),blob:f,added:Date.now()};
+    const ok=PERSIST?await dbPut(rec):false;if(!ok)memOnly=true;
+    MUS.list.push({id:rec.id,name:rec.name,tag:'your file',file:true,blob:f});added++;
+  }
+  if(added){addXP(3*added);toast(added+' song'+(added>1?'s':'')+' added'+(memOnly?' (this session only)':''))}
+  else toast('no audio files found');
+  musEmit();
+}
+async function musRemove(i){
+  const tr=MUS.list[i];if(!tr||!tr.file)return;
+  if(i===MUS.idx){musHalt();if(MA&&MA.el){MA.el.removeAttribute('src');MA.el.load&&MA.el.load()}MUS.idx=-1}
+  else if(i<MUS.idx)MUS.idx--;
+  MUS.list.splice(i,1);await dbDel(tr.id);musEmit();
+}
+setInterval(()=>{
+  const tr=MUS.list[MUS.idx];
+  if(MUS.playing&&tr&&tr.gen&&Date.now()-MUS.t0>150000)musNext(true);
+},1000);
+
+/* ---------- Music: app ---------- */
+function appMusic(){
+  const w=el('div','mus pad');
+  w.innerHTML=`<div class="mt1"></div><div class="ms1 dm"></div><canvas class="viz" width="420" height="70"></canvas>
+    <div class="pgb"><i></i></div><div class="tms dm"><span class="te">0:00</span><span class="tt"></span></div>
+    <div class="mc"><button class="btn pv" title="previous">⏮</button><button class="btn pp" style="min-width:44px">▶</button><button class="btn nx" title="next">⏭</button><button class="btn sf">shuffle</button><label class="dm">vol <input type="range" class="vl" min="0" max="100"></label></div>
+    <div class="ml"></div>
+    <div class="nrow"><button class="btn ad">+ add songs from this laptop</button><input type="file" class="fi" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac,.opus" multiple hidden></div>
+    <div class="dm fine2">The 5 built-in tracks are original music made live by this OS. Your own songs are copied into this laptop's browser storage and never leave it.<br>Want NCS tracks? LaggerOS can't download anything, so grab them from ncs.io on a connected device (keep their credit requirement), then add the files here.</div>`;
+  const q=s=>$(s,w);
+  const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+  const vl=q('.vl');vl.value=MUS.vol;vl.oninput=()=>{MUS.vol=Number(vl.value);setMusVol()};
+  q('.pp').onclick=()=>musToggle();q('.nx').onclick=()=>musNext();q('.pv').onclick=()=>musPrev();
+  q('.sf').onclick=()=>{MUS.shuffle=!MUS.shuffle;musEmit()};
+  q('.ad').onclick=()=>q('.fi').click();
+  q('.fi').onchange=e=>{const f=[...e.target.files];e.target.value='';if(f.length)musAdd(f)};
+  q('.pgb').onclick=e=>{
+    const tr=MUS.list[MUS.idx];if(!tr||!tr.file||!MA||!MA.el||!isFinite(MA.el.duration))return;
+    const r=e.currentTarget.getBoundingClientRect();MA.el.currentTime=(e.clientX-r.left)/r.width*MA.el.duration;
+  };
+  let sig='';
+  function draw(){
+    const tr=MUS.list[MUS.idx];
+    q('.mt1').textContent=tr?tr.name:'nothing playing';
+    q('.ms1').textContent=tr?tr.tag+(tr.gen?' · original, generated live':''):'pick a track below';
+    q('.pp').textContent=MUS.playing?'⏸':'▶';
+    q('.sf').classList.toggle('on',MUS.shuffle);
+    const s=MUS.list.map(t=>t.id).join(',')+'|'+MUS.idx+'|'+MUS.playing;
+    if(s!==sig){
+      sig=s;const ml=q('.ml');ml.innerHTML='';
+      MUS.list.forEach((t,i)=>{
+        const r=el('div','row'+(i===MUS.idx?' cur':''));
+        r.innerHTML=`<span class="n">${i===MUS.idx&&MUS.playing?'♫ ':'· '}${esc(t.name)}</span><span class="s">${esc(t.tag)}</span>${t.file?'<span class="x" title="remove">✕</span>':''}`;
+        r.onclick=e=>{
+          if(e.target.classList.contains('x')){modal('Remove "'+t.name+'" from LaggerOS?',{ok:'remove'},()=>musRemove(i));return}
+          musPlay(i);
+        };
+        ml.append(r);
+      });
+    }
+  }
+  function prog(){
+    const tr=MUS.list[MUS.idx],bar=q('.pgb i');
+    if(!tr){bar.style.width='0';q('.te').textContent='0:00';q('.tt').textContent='';return}
+    if(tr.file&&MA&&MA.el){
+      const d=MA.el.duration,c=MA.el.currentTime;bar.style.width=(isFinite(d)&&d?c/d*100:0)+'%';
+      q('.te').textContent=fmt(c);q('.tt').textContent=isFinite(d)?fmt(d):'';
+    }else{
+      const e=MUS.playing?(Date.now()-MUS.t0)/1000:0;bar.style.width=Math.min(100,e/150*100)+'%';
+      q('.te').textContent=fmt(e);q('.tt').textContent='live';
+    }
+  }
+  const cv=q('.viz'),g=cv.getContext('2d');let raf,run=true,ph=0;
+  const loop=()=>{
+    if(!run)return;
+    const W=cv.width,H=cv.height;g.fillStyle='#050607';g.fillRect(0,0,W,H);g.fillStyle=accent();
+    const bars=32,bw=W/bars;
+    if(MA&&MUS.playing){
+      const arr=new Uint8Array(MA.an.frequencyBinCount);MA.an.getByteFrequencyData(arr);
+      for(let i=0;i<bars;i++){const v=arr[Math.floor(i*arr.length*.75/bars)]/255;const h=Math.max(2,v*H);g.fillRect(i*bw+1,H-h,bw-2,h)}
+    }else{ph+=.05;for(let i=0;i<bars;i++){const h=2+Math.abs(Math.sin(ph+i*.4))*3;g.globalAlpha=.4;g.fillRect(i*bw+1,H-h,bw-2,h)}g.globalAlpha=1}
+    prog();raf=requestAnimationFrame(loop);
+  };
+  const sub=()=>draw();MUS.subs.add(sub);draw();loop();
+  musLoad();
+  const o=openWin('Music',w,{w:440,h:560});
+  onClose(o,()=>{run=false;cancelAnimationFrame(raf);MUS.subs.delete(sub)});
+  return o;
+}
+
+/* ---------- Battery (real, via the browser's Battery Status API) ---------- */
+const BAT={ok:false,ready:false,level:null,charging:null,ct:null,dt:null,hist:[],subs:new Set(),warned:false,mgr:null,at:0};
+const fmtDur=s=>{if(s==null||!isFinite(s)||s<=0)return null;const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m`};
+const batPct=()=>Math.round(BAT.level*100);
+const batNoBattery=()=>BAT.ok&&BAT.level===1&&BAT.charging&&BAT.ct===0&&!isFinite(BAT.dt);
+function batStatusText(){
+  if(!BAT.ok)return 'unavailable';
+  if(batNoBattery())return 'plugged in — fully charged or no battery';
+  if(BAT.charging)return BAT.level>=1?'fully charged':'charging'+(fmtDur(BAT.ct)?' · full in '+fmtDur(BAT.ct):'');
+  return 'on battery'+(fmtDur(BAT.dt)?' · '+fmtDur(BAT.dt)+' left':' · estimating time left…');
+}
+function batUI(){
+  const b=$('#bat');if(!b)return;
+  b.classList.remove('lo','ch');
+  if(!BAT.ok){b.textContent=BAT.ready?'BAT n/a':'BAT …';b.title=BAT.ready?'This browser does not share battery info. Use Chrome, Edge or Opera.':'Battery';return}
+  const p=batPct();
+  b.textContent=`BAT ${p}%${BAT.charging?' ⚡':''}`;
+  b.title='Battery: '+p+'% — '+batStatusText();
+  if(BAT.charging)b.classList.add('ch');else if(p<=20)b.classList.add('lo');
+}
+function batRead(){
+  const m=BAT.mgr;if(!m)return;
+  BAT.level=m.level;BAT.charging=m.charging;BAT.ct=m.chargingTime;BAT.dt=m.dischargingTime;BAT.at=Date.now();
+  BAT.hist.push({t:BAT.at,l:BAT.level,c:BAT.charging});if(BAT.hist.length>300)BAT.hist.shift();
+  const p=batPct();
+  if(CFG.batwarn&&!BAT.charging&&p<=20&&!BAT.warned&&!batNoBattery()){BAT.warned=true;toast('Low battery: '+p+'% — plug in soon');beep(330,.15,'square',1.2);setTimeout(()=>beep(247,.25,'square',1.2),180)}
+  if(BAT.charging||p>25)BAT.warned=false;
+  batUI();BAT.subs.forEach(f=>f());
+}
+(function batInit(){
+  BAT.ready=false;
+  if(!navigator.getBattery){BAT.ready=true;BAT.ok=false;batUI();return}
+  navigator.getBattery().then(m=>{
+    BAT.mgr=m;BAT.ok=true;BAT.ready=true;
+    ['levelchange','chargingchange','chargingtimechange','dischargingtimechange'].forEach(e=>m.addEventListener(e,batRead));
+    batRead();setInterval(batRead,30000);
+  }).catch(()=>{BAT.ready=true;BAT.ok=false;batUI()});
+})();
+function appBattery(){
+  const w=el('div','pad bat');
+  w.innerHTML=`<div class="big bp">—</div><div class="meter" style="margin:4px 0 10px"><div class="b" style="height:16px"><i class="bb" style="transition:width .6s linear"></i></div></div>
+    <div class="bs am" style="margin-bottom:6px"></div><div class="dm bd"></div>
+    <canvas class="bg" width="360" height="90" style="display:block;width:100%;height:90px;background:#050607;border:1px solid var(--line);margin:10px 0 4px"></canvas>
+    <div class="dm" style="font-size:11px">level since LaggerOS opened (updates live from your laptop)</div><div class="dm bn" style="margin-top:8px;font-size:11px;line-height:1.5"></div>`;
+  const q=s=>$(s,w);
+  function draw(){
+    if(!BAT.ok){
+      q('.bp').textContent='n/a';q('.bb').style.width='0';
+      q('.bs').textContent=BAT.ready?'battery info unavailable':'reading battery…';
+      q('.bd').textContent='';
+      q('.bn').innerHTML=BAT.ready?'This browser does not share battery data (Safari and Firefox block it). Open LaggerOS in Chrome, Edge or Opera on your laptop. The page must be opened from a file or a secure address.':'';
+      return;
+    }
+    const p=batPct(),bb=q('.bb');
+    q('.bp').textContent=p+'%'+(BAT.charging?' ⚡':'');
+    bb.style.width=p+'%';bb.style.background=BAT.charging?'var(--green)':p<=20?'var(--red)':'var(--amber)';
+    q('.bs').textContent=batStatusText();
+    q('.bd').textContent='last reading '+new Date(BAT.at).toLocaleTimeString([],{hour12:!CFG.h24});
+    q('.bn').textContent=batNoBattery()?'No battery was detected (a desktop computer, or a laptop that reports "always full"). Nothing to track.':'Readings come straight from your laptop through the browser. They never leave this machine.';
+    const cv=q('.bg'),g=cv.getContext('2d'),W=cv.width,H=cv.height;
+    g.fillStyle='#050607';g.fillRect(0,0,W,H);g.strokeStyle='#23272d';g.lineWidth=1;
+    [.25,.5,.75].forEach(f=>{g.beginPath();g.moveTo(0,H*f);g.lineTo(W,H*f);g.stroke()});
+    const h=BAT.hist;if(h.length<2){g.fillStyle='#6f6c62';g.font='11px monospace';g.fillText('collecting samples…',10,H/2);return}
+    const t0=h[0].t,span=Math.max(60000,h[h.length-1].t-t0);
+    g.strokeStyle=accent();g.lineWidth=2;g.beginPath();
+    h.forEach((s,i)=>{const x=(s.t-t0)/span*(W-4)+2,y=H-2-s.l*(H-4);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
+  }
+  BAT.subs.add(draw);draw();
+  const iv=setInterval(draw,5000);
+  const o=openWin('Battery',w,{w:400,h:400});
+  onClose(o,()=>{BAT.subs.delete(draw);clearInterval(iv)});return o;
 }
 
 /* ---------- global: artificial lag + offline enforcement ---------- */
@@ -529,7 +1667,7 @@ window.WebSocket=function(){throw new Error('LaggerOS: uplink severed')};
 /* one window per utility app: reopening focuses the existing one */
 const OPEN={};
 const single=(k,fn)=>(...a)=>{
-  const e=OPEN[k];if(e&&e.win.isConnected){e.win.style.display='';e.focus();return e}
+  const e=OPEN[k];if(CFG.single!==false&&e&&e.win.isConnected){e.win.style.display='';e.focus();return e}
   const o=fn(...a);OPEN[k]=o;const pc=o.onclose;o.onclose=()=>{delete OPEN[k];pc&&pc()};return o;
 };
 appProfile=single('profile',appProfile);
@@ -537,16 +1675,27 @@ appMonitor=single('monitor',appMonitor);
 appNetscan=single('netscan',appNetscan);
 appAbout=single('about',appAbout);
 
-const apps=[['▮','Terminal',()=>appTerminal()],['▤','Files',()=>appFiles()],['✎','Notes',()=>appNotes()],['☻','Profile',()=>appProfile()],['▥','Monitor',()=>appMonitor()],['◎','Netscan',()=>appNetscan()],['?','About',()=>appAbout()]];
-apps.forEach(([g,n,f])=>{const i=el('div','icon',`<b>${g}</b><span>${n}</span>`);i.onclick=f;$('#icons').append(i)});
+appCalc=single('calc',appCalc);appClock=single('clock',appClock);appSnake=single('snake',appSnake);
+appMines=single('mines',appMines);appPaint=single('paint',appPaint);appSynth=single('synth',appSynth);
+appMusic=single('music',appMusic);appBattery=single('battery',appBattery);appCal=single('cal',appCal);appTasks=single('tasks',appTasks);appBrowser=single('browser',appBrowser);appSettings=single('settings',appSettings);
+const REG={terminal:()=>appTerminal(),files:()=>appFiles(),notes:()=>appNotes(),profile:()=>appProfile(),monitor:()=>appMonitor(),netscan:()=>appNetscan(),
+  calc:()=>appCalc(),clock:()=>appClock(),snake:()=>appSnake(),mines:()=>appMines(),paint:()=>appPaint(),synth:()=>appSynth(),
+  music:()=>appMusic(),battery:()=>appBattery(),calendar:()=>appCal(),tasks:()=>appTasks(),browser:()=>appBrowser(),settings:()=>appSettings(),about:()=>appAbout()};
+[['▮','Terminal','terminal'],['▤','Files','files'],['✎','Notes','notes'],['☻','Profile','profile'],['⚙','Settings','settings'],['♪','Music','music'],['▰','Battery','battery'],['◍','Browser','browser'],
+ ['▦','Calc','calc'],['◷','Clock','clock'],['▩','Calendar','calendar'],['☰','Tasks','tasks'],['▥','Monitor','monitor'],['◎','Netscan','netscan'],
+ ['≋','Snake','snake'],['✹','Mines','mines'],['✐','Paint','paint'],['♫','Synth','synth'],['?','About','about']
+].forEach(([g,n,k])=>{const i=el('div','icon',`<b>${g}</b><span>${n}</span>`);i.onclick=REG[k];$('#icons').append(i)});
 $('#net').onclick=()=>appNetscan();
 $('#chip').onclick=()=>appProfile();
+$('#mbtn').onclick=()=>REG.music();
+$('#bat').onclick=()=>REG.battery();
 $('#pwr').onclick=()=>modal('Power',{buttons:[
-  ['restart',()=>location.reload()],
+  ['log out',()=>location.reload()],
   ['close all windows',()=>wins.slice().forEach(k=>k.win.querySelector('.cl').click())],
-  ['wipe ALL data',()=>modal('Delete every file AND your profile from this laptop? This cannot be undone.',{ok:'wipe everything'},()=>{store.del(KEY);store.del(PKEY);location.reload()})]
+  ['wipe ALL data',()=>modal('Delete your account, files, profile and settings from this laptop? This cannot be undone.',{ok:'wipe everything'},eraseCountdown)]
 ]});
-setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString([], {hour12:false})+'  OFFLINE',1000);
+setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString([],{hour12:!CFG.h24,hour:'2-digit',minute:'2-digit',...(CFG.secs?{second:'2-digit'}:{})})+'  OFFLINE',1000);
+applyCfg();
 refreshProfile();
 
 /* ---------- boot ---------- */
@@ -562,15 +1711,144 @@ const lines=[
  ['','dim','you are now alone. welcome to LaggerOS.']
 ];
 const boot=$('#boot');let bi=0,done=false;
-function finish(){if(done)return;done=true;boot.style.transition='opacity .5s';boot.style.opacity=0;setTimeout(()=>boot.remove(),500);appTerminal();onBoot()}
+function finish(){
+  if(done)return;done=true;
+  boot.style.transition='opacity .5s';boot.style.opacity=0;setTimeout(()=>boot.remove(),500);
+  if(CFG.bootterm!==false)appTerminal();
+  onBoot();
+  if(CFG.bootbeep){beep(440,.08);setTimeout(()=>beep(660,.1),110)}
+}
+const spd={slow:1.8,normal:1,fast:.35}[CFG.bootspeed]||1;
 function step(){
   if(done)return;
-  if(bi>=lines.length){setTimeout(finish,700);return}
+  if(bi>=lines.length){setTimeout(finish,700*spd);return}
   const[l,c,r]=lines[bi++];
   boot.innerHTML+=esc(l)+`<span class="${c}">${esc(r)}</span>\n`;
-  setTimeout(step,260+Math.random()*320);
+  setTimeout(step,(260+Math.random()*320)*spd);
 }
-boot.addEventListener('click',finish);step();
+boot.addEventListener('click',finish);
+
+/* ---------- accounts: set up on first run, log in on every open ---------- */
+const AKEY='laggeros.acct.v1',MIN_AGE=9;
+function wipeAll(){
+  try{Object.keys(localStorage).filter(k=>k.startsWith('laggeros.')).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  Object.keys(mem).forEach(k=>delete mem[k]);
+  try{indexedDB.deleteDatabase('laggeros-music')}catch(e){}
+}
+function eraseCountdown(){
+  const SECS=10;
+  const ov=el('div','modal'),bx=el('div','box');ov.style.zIndex=10200;bx.style.cssText='text-align:center;min-width:320px';
+  bx.innerHTML=`<div class="mt red" style="font-size:15px;letter-spacing:2px">ERASING ALL DATA</div>
+    <div class="big red" id="ec">${SECS}</div>
+    <div class="meter" style="margin:8px 0"><div class="b"><i id="eb" style="width:100%;background:var(--red);transition:width 1s linear"></i></div></div>
+    <div class="dm" id="et" style="margin-bottom:12px;min-height:18px">starting…</div><button class="btn">cancel</button>`;
+  ov.append(bx);document.body.append(ov);
+  const steps=['wiping account…','wiping files…','wiping profile…','wiping settings…','wiping saved scores and notes…','almost gone…'];
+  let s=SECS;const ec=bx.querySelector('#ec'),eb=bx.querySelector('#eb'),et=bx.querySelector('#et');
+  const iv=setInterval(()=>{
+    s--;ec.textContent=s;eb.style.width=(s/SECS*100)+'%';
+    et.textContent=s>0?steps[Math.min(steps.length-1,Math.floor((SECS-s)/2))]:'erasing…';
+    beep(220+(SECS-s)*30,.05,'square',.6);
+    if(s<=0){
+      clearInterval(iv);wipeAll();et.textContent='erased. restarting…';bx.querySelector('.btn').disabled=true;
+      setTimeout(()=>location.reload(),700);
+    }
+  },1000);
+  et.textContent=steps[0];eb.style.width=(100)+'%';
+  bx.querySelector('.btn').onclick=()=>{clearInterval(iv);ov.remove();toast('erase cancelled — nothing was deleted')};
+}
+function cyrb53(str,seed=0){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(h2>>>0).toString(16).padStart(8,'0')+(h1>>>0).toString(16).padStart(8,'0')}
+const slowHash=s=>{let h=s;for(let i=0;i<5000;i++)h=cyrb53(h+s,i);return h};
+const toHex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function hashPw(pw,salt,scheme){
+  if(scheme!=='f1'&&window.crypto&&crypto.subtle){
+    try{
+      const enc=new TextEncoder(),k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']);
+      return{scheme:'p1',hash:toHex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:enc.encode(salt),iterations:100000},k,256))};
+    }catch(e){}
+  }
+  return{scheme:'f1',hash:slowHash(salt+':'+pw)};
+}
+const randSalt=()=>{try{return toHex(crypto.getRandomValues(new Uint8Array(16)))}catch(e){return cyrb53(String(Math.random())+Date.now())+cyrb53(String(Math.random()))}};
+function loadAcct(){try{const a=JSON.parse(store.get(AKEY));return a&&a.user&&a.hash&&a.salt?a:null}catch(e){return null}}
+
+function authScreen(build){
+  const ov=el('div','auth'),bx=el('div','abox');ov.append(bx);document.body.append(ov);
+  build(bx,ov);return ov;
+}
+const pwField=(id)=>`<div class="pw"><input id="${id}" type="password" autocomplete="off" spellcheck="false"><button type="button" class="btn sh">show</button></div>`;
+function wireShow(bx){bx.querySelectorAll('.sh').forEach(b=>b.onclick=()=>{const i=b.previousElementSibling;i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'show':'hide'})}
+
+function showSetup(done){
+  authScreen((bx,ov)=>{
+    bx.innerHTML=`<h2>LAGGEROS</h2><div class="sub">new device detected · create your account</div>
+      <label>USERNAME</label><input id="au" maxlength="16" autocomplete="off" spellcheck="false" placeholder="3-16 letters, numbers, - or _">
+      <label>PASSWORD</label>${pwField('ap')}
+      <label>CONFIRM PASSWORD</label>${pwField('ap2')}
+      <label>AGE</label><input id="aa" type="number" min="1" max="120" placeholder="LaggerOS is for ages ${MIN_AGE}+">
+      <div class="err"></div><button class="btn go">CREATE ACCOUNT</button>
+      <div class="fine">Everything stays on this laptop. Nothing is ever sent anywhere, because there is no network. Your password is stored scrambled, not as text. Write it down somewhere safe: if you forget it, the only way back in is to erase all data.</div>`;
+    wireShow(bx);
+    const q=s=>bx.querySelector(s),err=q('.err');
+    const fail=m=>{err.textContent=m;bx.classList.remove('shk');void bx.offsetWidth;bx.classList.add('shk')};
+    const submit=async()=>{
+      const u=q('#au').value.trim(),p=q('#ap').value,p2=q('#ap2').value,age=Number(q('#aa').value);
+      if(!/^[A-Za-z0-9_-]{3,16}$/.test(u))return fail('Username: 3-16 letters, numbers, - or _ only.');
+      if(p.length<4)return fail('Password must be at least 4 characters.');
+      if(p!==p2)return fail('Passwords do not match.');
+      if(!q('#aa').value||!Number.isInteger(age)||age<1||age>120)return fail('Please enter your age as a whole number.');
+      if(age<MIN_AGE)return fail(`Sorry, LaggerOS is for ages ${MIN_AGE} and up. No account was created.`);
+      q('.go').disabled=true;
+      const salt=randSalt(),h=await hashPw(p,salt);
+      store.set(AKEY,JSON.stringify({user:u,salt,scheme:h.scheme,hash:h.hash,age,created:Date.now()}));
+      P.name=u;saveP();ov.remove();done(true);
+    };
+    q('.go').onclick=submit;
+    bx.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
+    setTimeout(()=>q('#au').focus(),30);
+  });
+}
+
+function showLogin(acct,done){
+  authScreen((bx,ov)=>{
+    bx.innerHTML=`<h2>LAGGEROS</h2><div class="sub">locked · log in to continue</div>
+      <label>USERNAME</label><input id="au" maxlength="16" autocomplete="off" spellcheck="false">
+      <label>PASSWORD</label>${pwField('ap')}
+      <div class="err"></div><button class="btn go">LOG IN</button>
+      <div class="fine"><a class="fg">forgot username or password? erase data</a></div>`;
+    wireShow(bx);
+    const q=s=>bx.querySelector(s),err=q('.err'),go=q('.go');
+    let fails=0,locked=false;
+    const fail=m=>{err.textContent=m;bx.classList.remove('shk');void bx.offsetWidth;bx.classList.add('shk')};
+    const lock=()=>{
+      locked=true;go.disabled=true;let s=Math.min(30,5*(fails-2));
+      const iv=setInterval(()=>{
+        if(s<=0){clearInterval(iv);locked=false;go.disabled=false;err.textContent='';return}
+        err.textContent=`too many tries — wait ${s}s`;s--;
+      },1000);
+      err.textContent=`too many tries — wait ${s}s`;
+    };
+    const submit=async()=>{
+      if(locked)return;
+      const u=q('#au').value.trim(),p=q('#ap').value;
+      go.disabled=true;
+      const h=await hashPw(p,acct.salt,acct.scheme||'p1');
+      go.disabled=false;
+      if(u.toLowerCase()===acct.user.toLowerCase()&&h.hash===acct.hash){
+        P.name=acct.user;saveP();ov.remove();done(false);return;
+      }
+      fails++;fail('Wrong username or password.');q('#ap').value='';
+      if(fails>=3)lock();
+    };
+    go.onclick=submit;
+    bx.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
+    q('.fg').onclick=()=>modal('Erase ALL LaggerOS data on this laptop? That deletes your account, files, profile and settings, and cannot be undone. You will then create a new account.',{ok:'erase everything'},eraseCountdown);
+    setTimeout(()=>q('#au').focus(),30);
+  });
+}
+
+const startBoot=()=>{CFG.bootanim===false?finish():step()};
+{const acct=loadAcct();acct?showLogin(acct,startBoot):showSetup(startBoot)}
 </script>
 </body>
 </html>
