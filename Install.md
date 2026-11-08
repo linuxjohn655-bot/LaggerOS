@@ -1,6 +1,6 @@
-To download LaggerOS.
-Click LaggerOS.html then click download raw file.
-open the file*
+LaggerOS install.md
 
-
-*If it opens plain code then open VS code and paste the code in it and save it and open it from VS code.
+Click the laggeros.html and download it.
+then chose or make a folder to store ur data(locally)
+then signup
+then its ready
